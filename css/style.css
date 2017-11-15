@@ -1,0 +1,22 @@
+.form-message {
+    padding: 5px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+.container-top {
+    padding-top: 55px;
+}
+
+.band-img {
+    max-height: 400px;
+    width: auto;
+}
+
+.p-t-xs {
+    padding-top: 5px;
+}
+
+.p-t-sm {
+    padding-top: 10px;
+}

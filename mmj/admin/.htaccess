@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Enter admin credentials."
+AuthUserFile /home2/meganmeg/public_html/gregandmegan/one-big-handbook/.htpasswd
+Require valid-user

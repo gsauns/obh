@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>MMJ: One Big Handbook - Beta</title>
+        <link rel="icon" href="../../img/ico/jim.ico">
+        <link rel="stylesheet" href="../../css/bootstrap/bootstrap.css">
+        <link rel="stylesheet" href="../../css/bootstrap/cyborg.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="../../css/jqueryui/jquery-ui.min.css">
+        <link rel="stylesheet" href="../../css/style.css">
+    </head>
+    <body>
+        <!-- Navbar start -->
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="../../index.html" class="navbar-brand">One Big Handbook</a>
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#nav-main">
+                        <span>Menu</span>
+                    </button>
+                </div>
+                <div class="navbar-collapse collapse" id="nav-main">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="../shows">Shows</a></li>
+                        <li><a href="../band">The Band</a></li>
+                        <li><a href="../band">Search</a></li>
+                        <li><a href="../about">About</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="../admin/shows.html">Shows</a></li>
+                                <li><a href="../admin/songs.html">Songs</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Navbar end -->
+
+        <!-- Main Container start -->
+        <div class="container container-top">
+            <div class="row">
+                <div class="col-xs-12">
+                    <button type="button" class="btn btn-info btn-new">New Show</button>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h2>Shows - Admin</h2>
+                </div>
+                <table id="tblShows" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Date</th>
+                            <th>Show</th>
+                            <th>Location</th>
+                            <th>Address</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Main Container end -->
+
+        <!-- Modal start -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="showModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="showModalLabel">New Show</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="shows.php" method="post" id="showsform" class="entry-form">
+                            <input type="hidden" id="form_id" name="id" />
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label for="headline">Show Headline</label>
+                                    <input type="text" id="headline" name="headline" class="form-control" />
+                                    <p class="help-block"></p>
+                                </div>
+                                <div class="form-group col-xs-12">
+                                    <label for="date">Date</label>
+                                    <input type="text" id="date" name="date" class="form-control datepicker" />
+                                    <p class="help-block"></p>
+                                </div>
+                                <div class="form-group col-xs-12">
+                                    <label for="location">Venue/Location</label>
+                                    <input type="text" id="location" name="location" class="form-control" />
+                                    <p class="help-block"></p>
+                                </div>
+                                <div class="form-group col-xs-12">
+                                    <label for="address">Address</label>
+                                    <input type="text" id="address" name="address" class="form-control" />
+                                    <p class="help-block"></p>
+                                </div>
+                                <div class="form-group col-xs-12">
+                                    <label for="notes">Notes</label>
+                                    <textarea id="notes" name="notes" class="form-control" rows="5"></textarea>
+                                </div>
+                                <div class="form-group col-xs-12 p-t-sm">
+                                    <button class="btn btn-primary">Save</button>
+                                    <p id="form-message" class="form-message"></p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal end -->
+
+        <script type="text/javascript" src="../../js/vendor/jquery/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="../../js/vendor/bootstrap/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+        <script type="text/javascript" src="../../js/vendor/jquery/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="../../js/vendor/moment/moment.min.js"></script>
+        <script type="text/javascript" src="../../js/main.js"></script>
+        <script type="text/javascript" src="../../js/form.js"></script>
+        <script type="text/javascript" src="../../js/shows.js"></script>
+    </body>
+</html>
