@@ -10,11 +10,13 @@ $(document).ready(function() {
 	
 	$('button.btn-new').on('click', function () {
 		var $form 	= $('form.entry-form'),
-			$modal 	= $('#myModal');
+			$modal 	= $('#myModal'),
+			type	= $(this).attr('item-type');
 
 		//$form.trigger('reset');
 		//resetForm($form);
 		clearEntryForms(true);
+		setModalHeader($modal, 'New ' + type);
 		$modal.modal();
 	});
 

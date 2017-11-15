@@ -12,18 +12,27 @@ function td(content) {
         '</td>';
 }
 
-function editColumn(id, api_path) {
+function setModalHeader($modal, hdr) {
+    $modal.find('.modal-title').html(hdr);
+}
+
+function editColumn(id, api_path, nameval) {
     var url     = [location.protocol, '//', location.host, location.pathname].join(''),
         result  = '';
     if (url.indexOf('admin/') > -1)
-        result = '<td><button item-id="' + id + '" item-type="' + api_path + '" class="btn btn-primary btn-sm edit-btn" onclick="editRecord(this)">Edit</button></td>';
+        result = '<td><button item-id="' + id + '" item-type="' + api_path + '" item-name="' + nameval.replace(/"/g,'&quot;') + '" class="btn btn-primary btn-sm edit-btn" onclick="editRecord(this)">Edit</button></td>';
 
     return result;
 }
 
+function newButtonType(type) {
+    $('.btn-new').attr('item-type',type);
+}
+
 function editRecord(sender) {
-    var id 		= $(sender).attr('item-id'),
-        type 	= $(sender).attr('item-type');
+    var id 		    = $(sender).attr('item-id'),
+        type 	    = $(sender).attr('item-type'),
+        itemname    = $(sender).attr('item-name');
 
     clearEntryForms(false);
 
@@ -46,8 +55,9 @@ function editRecord(sender) {
                             }
                         }
                     }
-
-                    $('.modal').modal('show');
+                    var $modal = $('.modal');
+                    setModalHeader($modal, 'Edit ' + itemname);
+                    $modal.modal('show');
                 }
                 catch (ex) {
                     errstring = ex.message;

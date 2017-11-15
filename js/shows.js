@@ -1,7 +1,9 @@
 'use strict';
 
+
 $(document).ready(function() {
     loadShowInfo(false);
+    newButtonType('Show');
 });
 
 function loadShowInfo (clearBody) {
@@ -27,7 +29,7 @@ function loadShowInfo (clearBody) {
                             dt = new Date(result[i].date);
 
                             row = '<tr>' + 
-                                editColumn(result[i].id, 'mmj_shows') +
+                                editColumn(result[i].id, 'mmj_shows', result[i].headline) +
                                 td(moment(result[i].date).format('MM/DD/YYYY')) +
                                 td(result[i].headline) +
                                 td(result[i].location) +

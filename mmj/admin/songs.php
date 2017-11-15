@@ -17,7 +17,7 @@ switch ($method) {
         $name               = $mysqli->real_escape_string($_POST['name']);
         $original_artist    = $mysqli->real_escape_string($_POST['original_artist']);
         $original_album     = $mysqli->real_escape_string($_POST['original_album']);
-        $year_released      = $_POST['year_released'];
+        $year_released      = empty($_POST['year_released']) ? "NULL" : $_POST['year_released'];
         $notes 			    = $mysqli->real_escape_string($_POST['notes']);
         $user               = "username";
         $id                 = $mysqli->real_escape_string($_POST['id']);
@@ -27,7 +27,7 @@ switch ($method) {
                 " SET name =  '$name', ".
                 " original_artist = '$original_artist', ".
                 " original_album = '$original_album', ".
-                " year_released = '$year_released', ".
+                " year_released = $year_released, ".
                 " notes = '$notes', ".
                 " updated_by = '$user', ".
                 " updated = NOW() ".
@@ -38,14 +38,13 @@ switch ($method) {
         else {
             $sql = "INSERT INTO mmj_songs ".
                 "(name, original_artist, original_album, year_released, notes, created_by, created) ".
-                "VALUES ('$name', '$original_artist', '$original_album', '$year_released', '$notes', '$user', NOW())";
+                "VALUES ('$name', '$original_artist', '$original_album', $year_released, '$notes', '$user', NOW())";
 
             $success_msg = "insert";
         }
 
         break;
 }
-
 
 if ($mysqli->query($sql)) {
     if ($success_msg == "insert") {
