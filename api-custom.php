@@ -9,11 +9,16 @@ function getSetlistByShowId($show_id) {
     $result = "SELECT sl.*,
                 shows.headline,
                 shows.date,
-                shows.location
+                shows.location,
+                songs.name,
+                songs.original_artist
                 FROM mmj_shows shows
                 LEFT JOIN mmj_setlists sl
                     ON shows.id = sl.show_id 
-                WHERE shows.id = $show_id";
+                LEFT JOIN mmj_songs songs
+                    ON sl.song_id = songs.id
+                WHERE shows.id = $show_id
+                ORDER BY COALESCE(sl.order,9999)";
 
     return $result;
 }

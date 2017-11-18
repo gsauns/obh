@@ -13,7 +13,65 @@
         <link rel="stylesheet" href="../../css/style.css">
     </head>
     <body>
-        <!-- Setlist only here. URL must contain a show ID. -->
+        <!-- Navbar start -->
+        <div class="navbar navbar-default navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <a href="../../index.html" class="navbar-brand">One Big Handbook</a>
+                        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#nav-main">
+                            <span>Menu</span>
+                        </button>
+                    </div>
+                    <div class="navbar-collapse collapse" id="nav-main">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="../shows">Shows</a></li>
+                            <li><a href="../band">The Band</a></li>
+                            <li><a href="../songs">Songs</a></li>
+                            <li><a href="../about">About</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="../admin/shows.html">Shows</a></li>
+                                    <li><a href="../admin/songs.html">Songs</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Navbar end -->
+    
+            <!-- Main Container start -->
+            <div class="container container-top">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h3>Setlist Admin</h3>
+                        <h2 id="setlistTitle">Loading setlist...</h2>
+                    </div>
+                    <table id="tblShows" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Order</th>
+                                <th>Song</th>
+                                <th>Length</th>
+                                <th>Encore?</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <!-- Footer for adding new rows -->
+                        <tfoot>
+                            <tr>
+                                <td colspan="6">
+                                    <button class="btn btn-sm btn-primary">+ Add</button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <!-- Main Container end -->
 
         <script type="text/javascript" src="../../js/vendor/jquery/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="../../js/vendor/bootstrap/bootstrap.min.js"></script>

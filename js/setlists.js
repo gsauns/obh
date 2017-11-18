@@ -23,29 +23,25 @@ function loadSetlistinfo (show_id) {
                     // if (clearBody)
                     //     $tbody.empty();
 
-                    // if (Array.isArray(result) && result.length > 0) {
-                    //     var row, dt;
+                    if (Array.isArray(result) && result.length > 0) {
+                        var row, dt;
 
-                    //     for (var i = 0; i < result.length; i++) {
-                    //         dt = new Date(result[i].date);
+                        $('#setlistTitle').text(result[0].headline);
 
-                    //         row = '<tr>' + 
-                    //             editColumn(result[i].id, 'mmj_shows', result[i].headline) +
-                    //             td(moment(result[i].date).format('MM/DD/YYYY')) +
-                    //             td(result[i].headline) +
-                    //             td(result[i].location) +
-                    //             (result[i] && result[i].address.length > 0 ? 
-                    //                 td('<a href="https://maps.google.com/maps?q=' + 
-                    //                 result[i].address + 
-                    //                 '" target="_blank">' + 
-                    //                 result[i].address + 
-                    //                 '</a>') : td(result[i].address)) +
-                    //             td(result[i].notes) +
-                    //             '</tr>';
+                        for (var i = 0; i < result.length; i++) {
+                            var songlength = moment().startOf('day').seconds(result[i]['length']).format('m:ss');
+                            row = '<tr>' + 
+                                editColumn(result[i].id, 'mmj_setlists', 'xyz') +
+                                td(result[i].order) +
+                                td(result[i].name) +
+                                td(songlength) +
+                                td(result[i].encore == '1' ? 'Y' : null) +
+                                td(result[i].notes) +
+                                '</tr>';
 
-                    //         $tbody.append(row);
-                    //     }
-                    // }
+                            $tbody.append(row);
+                        }
+                    }
                 }
                 catch (ex) {
                     errstring = ex.message;
