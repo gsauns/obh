@@ -85,3 +85,8 @@ function clearEntryForms(clearFields) {
         $('form').find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
     }
 }
+
+function getParameterByName(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
