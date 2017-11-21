@@ -5,12 +5,11 @@ $(document).ready(function() {
     var show_id = getParameterByName('show');
     loadSetlistinfo(show_id);
 
-    $('select[name="song_id"]').select2({
-        ajax: {
-            url: '../../api-search.php/songs/',
-            dataType: 'json'
-        },
-        minimumInputLength: 1
+    initSelect2Setlist();
+
+    $('#btnAdd').click(function () {
+        var $row = $('tfoot > tr');
+        submitSetlistRecord($row, true);
     });
 });
 
@@ -67,4 +66,55 @@ function loadSetlistinfo (show_id) {
         }
 
     });
+}
+
+function initSelect2Setlist() {
+    $('select[name="song_id"]').select2({
+        ajax: {
+            url: '../../api-search.php/songs/',
+            dataType: 'json'
+        },
+        minimumInputLength: 1,
+        allowClear: true
+    });
+}
+
+function submitSetlistRecord($row, newrecord) {
+    var obj = {};
+
+    obj['show_id'] = getParameterByName('show');
+    obj['order'] = $row.find('input[name="order"]').val();
+    obj['song_id'] = $row.find('select[name="song_id"]').val();
+    obj['length'] = $row.find('input[name="length"]').val();
+    obj['encore'] = $row.find('input[name="encore"]').is(':checked') ? 1 : 0;
+    obj['notes'] = $row.find('input[name="notes"]').val();
+
+    // TODO: validation
+
+    $.ajax({
+        url: 'setlists.php',
+        data: JSON.stringify(obj),
+        type: 'post',
+        contentType: "application/json",
+        success: function (data, status) {
+            if (!isNaN(data)) {
+                // insert
+                $messagep.addClass('bg-success').html("New " + entity + " successfully created.");
+                $("input#form_id").val(data);
+            }
+            else if (data == 'update')
+                // update
+                $messagep.addClass('bg-success').html(entity + " saved.");
+            else 
+                // error
+                $messagep.addClass('bg-danger').html("Error saving song.<br>" + data);
+                
+            callback(true);
+        },
+        error: function (data, status, errorThrown) {
+            console.log('Error', data, status, errorThrown);
+        }
+    });
+
+    console.log(obj);
 }
