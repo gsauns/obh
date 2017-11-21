@@ -4,6 +4,14 @@
 $(document).ready(function() {
     var show_id = getParameterByName('show');
     loadSetlistinfo(show_id);
+
+    $('select[name="song_id"]').select2({
+        ajax: {
+            url: '../../api-search.php/songs/',
+            dataType: 'json'
+        },
+        minimumInputLength: 1
+    });
 });
 
 function loadSetlistinfo (show_id) {

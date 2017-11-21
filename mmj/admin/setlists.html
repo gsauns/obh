@@ -62,10 +62,15 @@
                         <tbody></tbody>
                         <!-- Footer for adding new rows -->
                         <tfoot>
-                            <tr>
-                                <td colspan="6">
-                                    <button class="btn btn-sm btn-primary">+ Add</button>
+                            <tr class="footer-row">
+                                <td>
+                                    <button class="btn btn-sm btn-success" tabindex="300">+ Add</button>
                                 </td>
+                                <td><input tabindex="301" type="number" name="order" class="form-control grid-setlist-order" min="0"></td>
+                                <td><select tabindex="302" name="song_id" style="min-width:200px;"></select></td>
+                                <td><input tabindex="303" type="text" name="length" class="form-control grid-setlist-length"></td>
+                                <td><input tabindex="304" type="checkbox" name="encore" class="form-control text-center"></td>
+                                <td><input tabindex="305" type="text" name="notes" class="form-control"></td>
                             </tr>
                         </tfoot>
                     </table>
