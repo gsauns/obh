@@ -1,22 +1,26 @@
 'use strict';
 
 function emptyRow(colspan) {
+    // row returned when no records are found.
     return '<tr class="danger"><td' + 
         (!isNaN(colspan) && colspan > 0 ? ' colspan="' + colspan + '"' : '') +
         '>No records found.</td></tr>';
 }
 
 function td(content) {
+    // table td's
     return '<td>' + 
         ((content || content === false) && content.trim().length > 0 ? content : '&nbsp;' ) +
         '</td>';
 }
 
 function setModalHeader($modal, hdr) {
+    // sets header of modal popups
     $modal.find('.modal-title').html(hdr);
 }
 
 function editColumn(id, api_path, nameval) {
+    // returns a <td> with an edit button for that specific entity
     var url     = [location.protocol, '//', location.host, location.pathname].join(''),
         result  = '';
     if (url.indexOf('admin/') > -1)
@@ -26,10 +30,12 @@ function editColumn(id, api_path, nameval) {
 }
 
 function newButtonType(type) {
+    // sets "New" button type
     $('.btn-new').attr('item-type',type);
 }
 
 function editRecord(sender) {
+    // handles when edit button is clicked on a row
     var id 		    = $(sender).attr('item-id'),
         type 	    = $(sender).attr('item-type'),
         itemname    = $(sender).attr('item-name');
@@ -76,6 +82,7 @@ function editRecord(sender) {
 }
 
 function clearEntryForms(clearFields) {
+    // clears out all form fields.
 	$('div.form-group').removeClass('bg-danger');
 	$('p.help-block').empty();
     $('p#form-message').removeClass('bg-danger bg-success text-danger text-success').empty();
@@ -87,6 +94,7 @@ function clearEntryForms(clearFields) {
 }
 
 function getParameterByName(name) {
+    // gets query string parameter
     var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }

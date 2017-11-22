@@ -75,6 +75,11 @@ function initSelect2Setlist() {
             dataType: 'json'
         },
         minimumInputLength: 1,
+        placeholder: {
+            // placeholder required for Select2 allowClear bug
+            id: "",
+            placeholder: "Song..."
+        },
         allowClear: true
     });
 }

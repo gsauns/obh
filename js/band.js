@@ -5,9 +5,10 @@ $(document).ready(function() {
 });
 
 function bandTile(id, name, instruments, twitter, photo_url) {
+    // returns a photo tile
+
     // var expr    = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
     //     regex   = new RegExp(expr);
-
     return '<div class="col-xs-12 col-sm-6">' +
                 '<div class="thumbnail">' +
                     '<img class="band-img" src="' + photo_url +
