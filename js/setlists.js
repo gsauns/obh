@@ -3,7 +3,7 @@
 
 $(document).ready(function() {
     var show_id = getParameterByName('show');
-    loadSetlistinfo(show_id);
+    loadSetlistinfo(show_id, false, false);
 
     initSelect2Setlist();
 
@@ -13,7 +13,15 @@ $(document).ready(function() {
     });
 });
 
-function loadSetlistinfo (show_id) {
+function loadSetlistinfo (show_id, clearBody, clearNewRow) {
+    if (clearNewRow) {
+        var $footerCells = $('tfoot > tr > td');
+        // TODO: increment order by 1
+        $footerCells.find('input').val('')
+        $footerCells.find('select[name="song_id"]').val('').trigger('change');
+        $footerCells.find('input[name="encore"]').prop('checked', false);
+    }
+
     $.ajax({
         url: '../../api-custom.php/setlists/' + show_id,
         type: 'post',
@@ -27,8 +35,8 @@ function loadSetlistinfo (show_id) {
                     result = JSON.parse(data);
                     console.log(result);
 
-                    // if (clearBody)
-                    //     $tbody.empty();
+                    if (clearBody)
+                        $tbody.empty();
 
                     if (Array.isArray(result) && result.length > 0) {
                         var row, dt;
@@ -36,7 +44,7 @@ function loadSetlistinfo (show_id) {
                         $('#setlistTitle').text(result[0].headline);
 
                         for (var i = 0; i < result.length; i++) {
-                            var songlength = moment().startOf('day').seconds(result[i]['length']).format('m:ss');
+                            var songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
                             row = '<tr>' + 
                                 editColumn(result[i].id, 'mmj_setlists', 'xyz') +
                                 td(result[i].order) +
@@ -85,6 +93,7 @@ function initSelect2Setlist() {
 }
 
 function submitSetlistRecord($row, newrecord) {
+    // send row
     var obj = {};
 
     obj['show_id'] = getParameterByName('show');
@@ -94,32 +103,67 @@ function submitSetlistRecord($row, newrecord) {
     obj['encore'] = $row.find('input[name="encore"]').is(':checked') ? 1 : 0;
     obj['notes'] = $row.find('input[name="notes"]').val();
 
-    // TODO: validation
+    var id = $row.find('input[name="id"]').val();
+    if (id != null)
+        obj['id'] = $row.find('input[name="notes"]').val();
 
-    $.ajax({
-        url: 'setlists.php',
-        data: JSON.stringify(obj),
-        type: 'post',
-        contentType: "application/json",
-        success: function (data, status) {
-            if (!isNaN(data)) {
-                // insert
-                $messagep.addClass('bg-success').html("New " + entity + " successfully created.");
-                $("input#form_id").val(data);
-            }
-            else if (data == 'update')
-                // update
-                $messagep.addClass('bg-success').html(entity + " saved.");
-            else 
-                // error
-                $messagep.addClass('bg-danger').html("Error saving song.<br>" + data);
-                
-            callback(true);
-        },
-        error: function (data, status, errorThrown) {
-            console.log('Error', data, status, errorThrown);
+    // Validation & transform
+    var valid   = true,
+        reason  = '';
+
+    // song - required
+    if (isNaN(obj['song_id'])) {
+        valid = false;
+        reason = 'song id';
+    }
+
+    // order - required & numeric
+    if (isNaN(obj['order'])) {
+        valid = false;
+        reason = 'order';
+    }
+
+    // length - must be valid m:ss moment. Transformed.
+    if (obj['length'] && obj['length'].length > 0) {
+        var songlength = moment(obj['length'], 'm:ss');
+        console.log('songlength',songlength);
+        if (songlength.isValid())
+            obj['length'] = songlength.diff(moment().startOf('day'), 'seconds');
+        else {
+            valid = false;
+            reason = 'song length';
         }
-    });
+    }
 
-    console.log(obj);
+    if (!valid)
+        alert('invalid: ' + reason);
+
+    else {
+        $.ajax({
+            url: 'setlists.php',
+            data: JSON.stringify(obj),
+            type: 'post',
+            contentType: "application/json",
+            success: function (data, status) {
+                // if (!isNaN(data)) {
+                //     // insert
+                //     $messagep.addClass('bg-success').html("New " + entity + " successfully created.");
+                //     $("input#form_id").val(data);
+                // }
+                // else if (data == 'update')
+                //     // update
+                //     $messagep.addClass('bg-success').html(entity + " saved.");
+                if (isNaN(data) && data != 'update') 
+                    // error
+                    $messagep.addClass('bg-danger').html("Error saving song.<br>" + data);
+                    
+                var show_id = getParameterByName('show');
+                // clear edit row on insert only
+                loadSetlistinfo(show_id, true, !isNaN(data));
+            },
+            error: function (data, status, errorThrown) {
+                console.log('Error', data, status, errorThrown);
+            }
+        });
+    }
 }

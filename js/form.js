@@ -121,7 +121,7 @@ function sendForm(entity, plural, $form, $messagep, valid, verb, callback) {
 			data: formdata,
 			success: function (data, status) {
 				if (!isNaN(data)) {
-					// insert
+					// insert. Returns id of record created.
 					$messagep.addClass('bg-success').html("New " + entity + " successfully created.");
 					$("input#form_id").val(data);
 				}
