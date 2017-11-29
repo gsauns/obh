@@ -41,6 +41,8 @@ function editRecord(sender) {
         itemname    = $(sender).attr('item-name');
 
     clearEntryForms(false);
+    $('.show-on-edit').show();
+    $('.hide-on-edit').hide();
 
     $.ajax({
         url: '../../api.php/' + type + '/' + id,
@@ -61,6 +63,9 @@ function editRecord(sender) {
                             }
                         }
                     }
+                    // do extra work for specific entity types
+                    editSpecificWork(id, type);
+                    // show the modal
                     var $modal = $('.modal');
                     setModalHeader($modal, 'Edit ' + itemname);
                     $modal.modal('show');
@@ -79,6 +84,16 @@ function editRecord(sender) {
             console.log('Error', data, status, errorThrown);
         }
     });
+}
+
+function editSpecificWork(id, type) {
+    // does extra work based on type of entity.
+    console.log(id, type);
+    switch (type) {
+        case 'mmj_shows':
+            $('#setlist_link').attr('href', '../admin/setlists.html?show=' + id);
+            break;
+    }
 }
 
 function clearEntryForms(clearFields) {

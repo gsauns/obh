@@ -21,6 +21,14 @@
     padding-top: 10px;
 }
 
+.p-l-sm {
+    padding-left: 10px;
+}
+
+.m-l-sm {
+    margin-left: 10px;
+}
+
 /* Setlist grid input widths */
 .grid-setlist-order {
     max-width: 50px;

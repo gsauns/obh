@@ -44,17 +44,20 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow) {
                         $('#setlistTitle').text(result[0].headline);
 
                         for (var i = 0; i < result.length; i++) {
-                            var songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
-                            row = '<tr>' + 
-                                editColumn(result[i].id, 'mmj_setlists', 'xyz') +
-                                td(result[i].order) +
-                                td(result[i].name) +
-                                td(songlength) +
-                                td(result[i].encore == '1' ? 'Y' : null) +
-                                td(result[i].notes) +
-                                '</tr>';
+                            // don't show if it's just the Show info coming back and no setlist
+                            if (result[i].id != null) {
+                                var songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
+                                row = '<tr>' + 
+                                    editColumn(result[i].id, 'mmj_setlists', 'xyz') +
+                                    td(result[i].order) +
+                                    td(result[i].name) +
+                                    td(songlength) +
+                                    td(result[i].encore == '1' ? 'Y' : null) +
+                                    td(result[i].notes) +
+                                    '</tr>';
 
-                            $tbody.append(row);
+                                $tbody.append(row);
+                            }
                         }
                     }
                 }

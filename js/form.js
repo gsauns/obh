@@ -17,6 +17,8 @@ $(document).ready(function() {
 		//resetForm($form);
 		clearEntryForms(true);
 		setModalHeader($modal, 'New ' + type);
+		$('.show-on-new').hide();
+		$('.hide-on-new').hide();
 		$modal.modal();
 	});
 
