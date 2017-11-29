@@ -29,6 +29,23 @@ function editColumn(id, api_path, nameval) {
     return result;
 }
 
+function saveDeleteCancelButtons(id, type) {
+    var result =    '<button item-id="' + id + '" item-type="' + type + 
+                        '" class="btn btn-sm btn-success save-btn" title="Save changes">' + 
+                        '<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>' +
+                    '</button>' +
+                    '<button item-id="' + id + '" item-type="' + type + 
+                        '" class="btn btn-sm btn-danger delete-btn" title="Delete record">' + 
+                        '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>' +
+                    '</button>' +
+                    '<button item-id="' + id + '" item-type="' + type + 
+                        '" class="btn btn-sm btn-warning cancel-btn" title="Cancel changes">' + 
+                        '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>' +
+                    '</button>';
+    
+    return result;
+}
+
 function newButtonType(type) {
     // sets "New" button type
     $('.btn-new').attr('item-type',type);
@@ -57,14 +74,16 @@ function editRecord(sender) {
                     if (Array.isArray(result) && result.length == 1) {
                         var record = result[0];
 
+                        // find each form control by name and assign the value
                         for (var field in record) {
                             if (record.hasOwnProperty(field)) {
-                                $('[name="' + field + '"]').val(record[field]);
+                                // any field not in a tfoot, that is
+                                $(':not(tfoot *)[name="' + field + '"]').val(record[field]);
                             }
                         }
                     }
                     // do extra work for specific entity types
-                    editSpecificWork(id, type);
+                    editSpecificWork(sender, id, type, data);
                     // show the modal
                     var $modal = $('.modal');
                     setModalHeader($modal, 'Edit ' + itemname);
@@ -86,12 +105,21 @@ function editRecord(sender) {
     });
 }
 
-function editSpecificWork(id, type) {
+function editSpecificWork(sender, id, type, data) {
     // does extra work based on type of entity.
-    console.log(id, type);
+    console.log(sender, id, type, data);
     switch (type) {
+        // SHOWS: just set setlist link URL
         case 'mmj_shows':
             $('#setlist_link').attr('href', '../admin/setlists.html?show=' + id);
+            break;
+
+        // SETLISTS: all work done here. Edit in-line.
+        case 'mmj_setlists':
+            var record = JSON.parse(data);
+            if (record.length == 1)
+                editSetlistInline(sender, id, record[0]);
+
             break;
     }
 }

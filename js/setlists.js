@@ -1,11 +1,18 @@
 'use strict';
 
+var rowcontrols = [
+    '<input tabindex="~01" type="number" name="order" class="form-control grid-setlist-order" min="0">',
+    '<select tabindex="~02" name="song_id" style="min-width:200px;"></select>',
+    '<input tabindex="~03" type="text" name="length" class="form-control grid-setlist-length">',
+    '<input tabindex="~04" type="checkbox" name="encore" class="form-control text-center">',
+    '<input tabindex="~05" type="text" name="notes" class="form-control">'
+];
 
 $(document).ready(function() {
     var show_id = getParameterByName('show');
     loadSetlistinfo(show_id, false, false);
 
-    initSelect2Setlist();
+    initSelect2Setlist($('tfoot > tr'));
 
     $('#btnAdd').click(function () {
         var $row = $('tfoot > tr');
@@ -27,7 +34,7 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow) {
         type: 'post',
         success: function (data, status) {
             var errstring   = '',
-                $tbody      = $('#tblShows > tbody');
+                $tbody      = $('#tblSetlist > tbody');
 
             if (status == 'success') {
                 var result;
@@ -48,7 +55,7 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow) {
                             if (result[i].id != null) {
                                 var songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
                                 row = '<tr>' + 
-                                    editColumn(result[i].id, 'mmj_setlists', 'xyz') +
+                                    editColumn(result[i].id, 'mmj_setlists', '_') +
                                     td(result[i].order) +
                                     td(result[i].name) +
                                     td(songlength) +
@@ -79,8 +86,8 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow) {
     });
 }
 
-function initSelect2Setlist() {
-    $('select[name="song_id"]').select2({
+function initSelect2Setlist($parent) {
+    $parent.find('select[name="song_id"]').select2({
         ajax: {
             url: '../../api-search.php/songs/',
             dataType: 'json'
@@ -91,8 +98,57 @@ function initSelect2Setlist() {
             id: "",
             placeholder: "Song..."
         },
-        allowClear: true
+        allowClear: true,
+        selectOnClose: true
     });
+}
+
+function editSetlistInline(sender, id, data) {
+    // called from main.js when edit row is clicked
+    var $tr         = $(sender).parents('tr:first'),
+        $tds        = $tr.find('td'),
+        $datatds    = $tr.find('td:not(:first)'),
+        songname    = $datatds.length > 1 ? $datatds[1].innerText : null;
+    
+    $tds.empty();
+    $('#tblSetlist button.edit-btn').prop('disabled', true);
+
+    $($tds[0]).html(
+        saveDeleteCancelButtons(data['id'], 'mmj_setlists')
+    );
+
+    for (var i = 0; i < $datatds.length; i++) {
+        $($datatds[i]).html(rowcontrols[i].replace('~','1'));
+    }
+
+    initSelect2Setlist($tr);
+
+    console.log(data);
+
+    $tr.find('input[name="order"]').val(data['order']);
+    //$tr.find('select[name="song_id"]').val(data['song_id']);
+    var song    = new Option(songname, data['song_id'], true, true),
+        obj     = { id: data['song_id'], text: songname },
+        $sel    = $tr.find('select[name="song_id"]');
+
+    $sel.append(song).trigger('change');
+    $sel.trigger({
+        type: 'select2:select',
+        params: {
+            data: obj
+        }
+    });
+
+    var songlength = moment(data['length'], 'ss');
+    if (songlength.isValid()) {
+        $tr.find('input[name="length"]').val(songlength.format('m:ss'));
+    }
+
+    if (data['encore'] == "0") {
+        $tr.find('input[name="encore"]').prop('checked', true);
+    }
+    
+    $tr.find('input[name="notes"]').val(data['notes']);
 }
 
 function submitSetlistRecord($row, newrecord) {
@@ -129,7 +185,6 @@ function submitSetlistRecord($row, newrecord) {
     // length - must be valid m:ss moment. Transformed.
     if (obj['length'] && obj['length'].length > 0) {
         var songlength = moment(obj['length'], 'm:ss');
-        console.log('songlength',songlength);
         if (songlength.isValid())
             obj['length'] = songlength.diff(moment().startOf('day'), 'seconds');
         else {
