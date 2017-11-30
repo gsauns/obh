@@ -11,6 +11,8 @@ if (mysqli_connect_errno()) {
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
+$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+$key = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 
 switch ($method) {
     case 'PUT':
@@ -22,15 +24,7 @@ switch ($method) {
         $user           = "username";
         $id             = $mysqli->real_escape_string($_PUT['id']);
 
-        $sql = "UPDATE mmj_shows ".
-        " SET headline =  '$headline', ".
-        " date = '$date', ".
-        " location = '$location', ".
-        " address = '$address', ".
-        " notes = '$notes', ".
-        " updated_by = '$user', ".
-        " updated = NOW() ".
-        " WHERE id = $id";
+        $sql = "PUT";
 
         break;
     case 'POST':
@@ -69,9 +63,14 @@ switch ($method) {
         break;
 
     case 'DELETE':
-        $id = $mysqli->real_escape_string($_PUT['id']);
+        if (is_numeric($key)) {
+            $sql = "DELETE FROM mmj_setlists WHERE id = $key";
+        }
+        else {
+            $sql = "";    
+        }
 
-        $sql = "DELETE FROM mmj_shows WHERE id = $id";
+        $success_msg = "delete";
 
         break;
 }

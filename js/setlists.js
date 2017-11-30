@@ -24,7 +24,9 @@ $(document).ready(function() {
 
     });
 
-    $('#tblSetlist').on('click', 'td.edit-row-buttons > .delete-btn', function () {
+    $('#tblSetlist').on('click', 'td.edit-row-buttons > .delete-btn', function (e) {
+        var id = $(e.currentTarget).attr('item-id');
+
         swal({
             title: 'Delete Setlist Entry', 
             text: 'Are you sure you want to delete this song from the setlist?',
@@ -34,6 +36,20 @@ $(document).ready(function() {
         }).then((willDelete) => {
             if (willDelete) {
                 // delete
+                $.ajax({
+                    url: 'setlists.php/' + id,
+                    type: 'delete',
+                    success: function (data) {
+                        if (data == 'delete')
+                            loadSetlistinfo(getParameterByName('show'), true, false);
+                        else
+                            swal('SQL Error', 'Error deleting entry: ' + data, 'danger');
+                    },
+                    error: function (data, status, errorThrown) {
+                        console.log('Error', data, status, errorThrown);
+                        swal('Error', 'Error deleting entry: ' + errorThrown, 'danger');
+                    },
+                })
             }
         });
     });
