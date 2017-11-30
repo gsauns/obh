@@ -18,9 +18,34 @@ $(document).ready(function() {
         var $row = $('tfoot > tr');
         submitSetlistRecord($row, true);
     });
+
+    // edit row events
+    $('#tblSetlist').on('click', 'td.edit-row-buttons > .save-btn', function () {
+
+    });
+
+    $('#tblSetlist').on('click', 'td.edit-row-buttons > .delete-btn', function () {
+        swal({
+            title: 'Delete Setlist Entry', 
+            text: 'Are you sure you want to delete this song from the setlist?',
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true
+        }).then((willDelete) => {
+            if (willDelete) {
+                // delete
+            }
+        });
+    });
+
+    $('#tblSetlist').on('click', 'td.edit-row-buttons > .cancel-btn', function () {
+        loadSetlistinfo(getParameterByName('show'), true, false);
+    });
 });
 
 function loadSetlistinfo (show_id, clearBody, clearNewRow) {
+    $('div.container').append('<div class="spinner"></div>');
+
     if (clearNewRow) {
         var $footerCells = $('tfoot > tr > td');
         // TODO: increment order by 1
@@ -55,7 +80,7 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow) {
                             if (result[i].id != null) {
                                 var songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
                                 row = '<tr>' + 
-                                    editColumn(result[i].id, 'mmj_setlists', '_') +
+                                    editColumn(result[i].id, 'mmj_setlists', '_', 'edit-row-buttons') +
                                     td(result[i].order) +
                                     td(result[i].name) +
                                     td(songlength) +
@@ -81,8 +106,10 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow) {
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
             alert('There was an error: ' + errorThrown);
+        },
+        complete: function () {
+            $('div.spinner').remove();
         }
-
     });
 }
 

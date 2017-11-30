@@ -19,12 +19,17 @@ function setModalHeader($modal, hdr) {
     $modal.find('.modal-title').html(hdr);
 }
 
-function editColumn(id, api_path, nameval) {
+function editColumn(id, api_path, nameval, classes) {
     // returns a <td> with an edit button for that specific entity
     var url     = [location.protocol, '//', location.host, location.pathname].join(''),
         result  = '';
     if (url.indexOf('admin/') > -1)
-        result = '<td><button item-id="' + id + '" item-type="' + api_path + '" item-name="' + nameval.replace(/"/g,'&quot;') + '" class="btn btn-primary btn-sm edit-btn" onclick="editRecord(this)">Edit</button></td>';
+        result = '<td class="'+ (classes == null ? '' : classes) + '">' + 
+            '<button item-id="' + id + 
+            '" item-type="' + api_path + 
+            '" item-name="' + nameval.replace(/"/g,'&quot;') + 
+            '" class="btn btn-primary btn-sm edit-btn" ' +  
+            'onclick="editRecord(this)">Edit</button></td>';
 
     return result;
 }
