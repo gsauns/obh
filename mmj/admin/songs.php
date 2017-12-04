@@ -10,14 +10,16 @@ if (mysqli_connect_errno()) {
     exit();
 }
 
+$data = json_decode(file_get_contents('php://input'), true);
+$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+$key = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+
 switch ($method) {
-    case 'PUT':
-        break;
     case 'POST':
         $name               = $mysqli->real_escape_string($_POST['name']);
         $original_artist    = $mysqli->real_escape_string($_POST['original_artist']);
         $original_album     = $mysqli->real_escape_string($_POST['original_album']);
-        $year_released      = empty($_POST['year_released']) ? "NULL" : $_POST['year_released'];
+        $year_released      = empty($_POST['year_released']) ? "NULL" : $mysqli->real_escape_string($_POST['year_released']);
         $notes 			    = $mysqli->real_escape_string($_POST['notes']);
         $user               = "username";
         $id                 = $mysqli->real_escape_string($_POST['id']);
@@ -43,6 +45,17 @@ switch ($method) {
             $success_msg = "insert";
         }
 
+        break;
+
+    case 'DELETE':
+        if (is_numeric($key)) {
+            $sql = "DELETE FROM mmj_songs WHERE id = $key";
+        }
+        else {
+            $sql = "";    
+        }
+
+        $success_msg = "delete";
         break;
 }
 

@@ -7,6 +7,8 @@ $(document).ready(function() {
 });
 
 function loadShowInfo (clearBody) {
+    $('div.container').append('<div class="spinner"></div>');
+
     $.ajax({
         url: '../../api.php/mmj_shows',
         type: 'post',
@@ -59,6 +61,9 @@ function loadShowInfo (clearBody) {
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
             swal('Error', 'There was an error: ' + errorThrown, 'danger');
+        },
+        complete: function () {
+            $('div.spinner').remove();
         }
 
     });

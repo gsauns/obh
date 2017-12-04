@@ -10,30 +10,14 @@ if (mysqli_connect_errno()) {
     exit();
 }
 
+$data = json_decode(file_get_contents('php://input'), true);
+$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+$key = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+
 switch ($method) {
-    case 'PUT':
-        $headline       = $mysqli->real_escape_string($_PUT['headline']);
-        $date           = date('Y-m-d', strtotime($_PUT['date']));
-        $location       = $mysqli->real_escape_string($_PUT['location']);
-        $address        = $mysqli->real_escape_string($_PUT['address']);
-        $notes 			= $mysqli->real_escape_string($_PUT['notes']);
-        $user           = "username";
-        $id             = $mysqli->real_escape_string($_PUT['id']);
-
-        $sql = "UPDATE mmj_shows ".
-        " SET headline =  '$headline', ".
-        " date = '$date', ".
-        " location = '$location', ".
-        " address = '$address', ".
-        " notes = '$notes', ".
-        " updated_by = '$user', ".
-        " updated = NOW() ".
-        " WHERE id = $id";
-
-        break;
     case 'POST':
         $headline       = $mysqli->real_escape_string($_POST['headline']);
-        $date           = date('Y-m-d', strtotime($_POST['date']));
+        $date           = $mysqli->real_escape_string(date('Y-m-d', strtotime($_POST['date'])));
         $location       = $mysqli->real_escape_string($_POST['location']);
         $address        = $mysqli->real_escape_string($_POST['address']);
         $notes 			= $mysqli->real_escape_string($_POST['notes']);
@@ -64,10 +48,14 @@ switch ($method) {
         break;
 
     case 'DELETE':
-        $id = $mysqli->real_escape_string($_PUT['id']);
+        if (is_numeric($key)) {
+            $sql = "DELETE FROM mmj_shows WHERE id = $key";
+        }
+        else {
+            $sql = "";    
+        }
 
-        $sql = "DELETE FROM mmj_shows WHERE id = $id";
-
+        $success_msg = "delete";
         break;
 }
 

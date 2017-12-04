@@ -6,6 +6,8 @@ $(document).ready(function() {
 });
 
 function loadSongInfo(clearBody) {
+    $('div.container').append('<div class="spinner"></div>');
+
     $.ajax({
         url: '../../api.php/songs',
         type: 'post',
@@ -53,7 +55,9 @@ function loadSongInfo(clearBody) {
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
             swal('Error', 'There was an error: ' + errorThrown, 'danger');
+        },
+        complete: function () {
+            $('div.spinner').remove();
         }
-
     });
 }

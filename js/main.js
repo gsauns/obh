@@ -146,6 +146,7 @@ function deleteRecord(sender) {
                     callback = loadShowInfo;
                     break;
                 case 'mmj_songs':
+                case 'songs':
                     callback = loadSongInfo;
                     break;
                 default:
@@ -157,9 +158,10 @@ function deleteRecord(sender) {
                 url: apitype + id,
                 type: 'delete',
                 success: function (data) {
-                    if (data == 'delete')
+                    if (data == 'delete') {
                         if (callback != null)
                             callback(true);
+                    }
                     else
                         swal('SQL Error', 'Error deleting record: ' + data, 'danger');
                 },
