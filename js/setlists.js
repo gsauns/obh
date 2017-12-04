@@ -242,10 +242,9 @@ function submitSetlistRecord($row, newrecord) {
     }
 
     if (!valid)
-        alert('invalid: ' + reason);
+        $.growl.error({ title: "Can't Save", message: 'Check on: ' + reason});
 
     else {
-        console.log(obj);
         $.ajax({
             url: 'setlists.php',
             data: JSON.stringify(obj),

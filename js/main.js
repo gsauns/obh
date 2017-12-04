@@ -102,10 +102,11 @@ function editRecord(sender) {
                 errstring = status;
 
             if (errstring.length > 0)
-                alert('There was an error: ' + errstring);
+                swal('Error', 'There was an error: ' + errstring, 'danger');
         },
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
+            swal('Error', 'There was an error: ' + errorThrown, 'danger');
         }
     });
 }
