@@ -31,11 +31,11 @@
 
 /* Setlist grid input widths */
 .grid-setlist-order {
-    max-width: 50px;
+    max-width: 70px;
 }
 
 .grid-setlist-length {
-    max-width: 100px;
+    max-width: 70px;
 }
 
 /* Spinner. Credit: http://tobiasahlin.com/spinkit/ */

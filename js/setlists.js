@@ -20,7 +20,11 @@ $(document).ready(function() {
     });
 
     // edit row events
-    $('#tblSetlist').on('click', 'td.edit-row-buttons > .save-btn', function () {
+    $('#tblSetlist').on('click', 'td.edit-row-buttons > .save-btn', function (e) {
+        var row = $(e.currentTarget).parents('tr');
+        // TODO: get row values and post
+        submitSetlistRecord($(row), false);
+
 
     });
 
@@ -157,7 +161,8 @@ function editSetlistInline(sender, id, data) {
     $('#tblSetlist button.edit-btn').prop('disabled', true);
 
     $($tds[0]).html(
-        saveDeleteCancelButtons(data['id'], 'mmj_setlists')
+        saveDeleteCancelButtons(data['id'], 'mmj_setlists') + 
+        '<input type="hidden" name="id" value="' + data['id'] + '"/>'
     );
 
     for (var i = 0; i < $datatds.length; i++) {
@@ -187,7 +192,7 @@ function editSetlistInline(sender, id, data) {
         $tr.find('input[name="length"]').val(songlength.format('m:ss'));
     }
 
-    if (data['encore'] == "0") {
+    if (data['encore'] == "1") {
         $tr.find('input[name="encore"]').prop('checked', true);
     }
     
@@ -207,7 +212,7 @@ function submitSetlistRecord($row, newrecord) {
 
     var id = $row.find('input[name="id"]').val();
     if (id != null)
-        obj['id'] = $row.find('input[name="notes"]').val();
+        obj['id'] = id;
 
     // Validation & transform
     var valid   = true,
@@ -240,27 +245,26 @@ function submitSetlistRecord($row, newrecord) {
         alert('invalid: ' + reason);
 
     else {
+        console.log(obj);
         $.ajax({
             url: 'setlists.php',
             data: JSON.stringify(obj),
             type: 'post',
             contentType: "application/json",
             success: function (data, status) {
-                // if (!isNaN(data)) {
-                //     // insert
-                //     $messagep.addClass('bg-success').html("New " + entity + " successfully created.");
-                //     $("input#form_id").val(data);
-                // }
-                // else if (data == 'update')
-                //     // update
-                //     $messagep.addClass('bg-success').html(entity + " saved.");
+                if (!isNaN(data)) {
+                    // insert
+                    $.growl.notice({ title: 'Saved', message: 'Added new song to show.'});
+                    loadSetlistinfo(obj['show_id'], true, true);
+                }
+                else if (data == 'update') {
+                    // update
+                    $.growl.notice({ title: 'Saved', message: 'Setlist entry saved successfully.'});
+                    loadSetlistinfo(obj['show_id'], true, false);
+                }
                 if (isNaN(data) && data != 'update') 
                     // error
-                    $messagep.addClass('bg-danger').html("Error saving song.<br>" + data);
-                    
-                var show_id = getParameterByName('show');
-                // clear edit row on insert only
-                loadSetlistinfo(show_id, true, !isNaN(data));
+                    $.growl.error({ title: 'Error', message: data});
             },
             error: function (data, status, errorThrown) {
                 console.log('Error', data, status, errorThrown);

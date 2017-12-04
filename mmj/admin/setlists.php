@@ -15,18 +15,6 @@ $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 $key = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 
 switch ($method) {
-    case 'PUT':
-        $headline       = $mysqli->real_escape_string($_PUT['headline']);
-        $date           = date('Y-m-d', strtotime($_PUT['date']));
-        $location       = $mysqli->real_escape_string($_PUT['location']);
-        $address        = $mysqli->real_escape_string($_PUT['address']);
-        $notes 			= $mysqli->real_escape_string($_PUT['notes']);
-        $user           = "username";
-        $id             = $mysqli->real_escape_string($_PUT['id']);
-
-        $sql = "PUT";
-
-        break;
     case 'POST':
         $show_id        = $mysqli->real_escape_string($data['show_id']);
         $song_id        = $mysqli->real_escape_string($data['song_id']);
@@ -42,7 +30,7 @@ switch ($method) {
         if (strlen($id) > 0) {
             $sql = "UPDATE mmj_setlists ".
                 " SET show_id = $show_id, ".
-                " SET song_id = $song_id, ".
+                " song_id = $song_id, ".
                 " `order` = $order, ".
                 " `length` = $length, ".
                 " encore = $encore, ".
