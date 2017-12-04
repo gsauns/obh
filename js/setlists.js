@@ -100,7 +100,7 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow) {
                             if (result[i].id != null) {
                                 var songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
                                 row = '<tr>' + 
-                                    editColumn(result[i].id, 'mmj_setlists', '_', 'edit-row-buttons') +
+                                    editColumn(result[i].id, 'mmj_setlists', false, '_', 'edit-row-buttons') +
                                     td(result[i].order) +
                                     td(result[i].name) +
                                     td(songlength) +

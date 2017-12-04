@@ -26,7 +26,7 @@ function loadSongInfo(clearBody) {
 
                         for (var i = 0; i < result.length; i++) {
                             row = '<tr item-id="' + result[i].id + '">' + 
-                                editColumn(result[i].id, 'songs', result[i].name) +
+                                editDeleteColumn(result[i].id, 'songs', true, result[i].name) +
                                 td(result[i].name) +
                                 td(result[i].original_artist) +
                                 td(result[i].original_album) +

@@ -19,17 +19,29 @@ function setModalHeader($modal, hdr) {
     $modal.find('.modal-title').html(hdr);
 }
 
-function editColumn(id, api_path, nameval, classes) {
+function editDeleteColumn(id, api_path, showDeleteButton, nameval, classes) {
     // returns a <td> with an edit button for that specific entity
-    var url     = [location.protocol, '//', location.host, location.pathname].join(''),
-        result  = '';
-    if (url.indexOf('admin/') > -1)
+    var url         = [location.protocol, '//', location.host, location.pathname].join(''),
+        result      = '',
+        itemname    = nameval.replace(/"/g,'&quot;');
+    if (url.indexOf('admin/') > -1) {
         result = '<td class="'+ (classes == null ? '' : classes) + '">' + 
             '<button item-id="' + id + 
             '" item-type="' + api_path + 
-            '" item-name="' + nameval.replace(/"/g,'&quot;') + 
+            '" item-name="' + itemname + 
             '" class="btn btn-primary btn-sm edit-btn" ' +  
-            'onclick="editRecord(this)">Edit</button></td>';
+            'onclick="editRecord(this)">Edit</button>';
+        
+        if (showDeleteButton)
+            result += '<button item-id="' + id + 
+                        '" item-type="' + api_path + 
+                        '" class="btn btn-sm btn-danger" ' +  
+                        'onclick="deleteRecord(this)">' + 
+                        '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>' + 
+                        '</button>';
+
+        result += '</td>';
+    }
 
     return result;
 }
@@ -107,6 +119,55 @@ function editRecord(sender) {
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
             swal('Error', 'There was an error: ' + errorThrown, 'danger');
+        }
+    });
+}
+
+function deleteRecord(sender) {
+    // handles when delete button clicked in a row
+    var id 		    = $(sender).attr('item-id'),
+    type 	        = $(sender).attr('item-type');
+
+    swal({
+        title: 'Delete Record', 
+        text: 'Are you sure you want to delete this record?',
+        icon: 'warning',
+        buttons: true,
+        dangerMode: true
+    }).then((willDelete) => {
+        if (willDelete) {
+            // delete
+            var idx = type.indexOf('mmj_'),
+            apitype = (idx >= 0 ? type.substring(idx + 4) : type) + '.php/',
+            callback;
+
+            switch (type) {
+                case 'mmj_shows':
+                    callback = loadShowInfo;
+                    break;
+                case 'mmj_songs':
+                    callback = loadSongInfo;
+                    break;
+                default:
+                    callback = null;
+                    break;
+            };
+
+            $.ajax({
+                url: apitype + id,
+                type: 'delete',
+                success: function (data) {
+                    if (data == 'delete')
+                        if (callback != null)
+                            callback(true);
+                    else
+                        swal('SQL Error', 'Error deleting record: ' + data, 'danger');
+                },
+                error: function (data, status, errorThrown) {
+                    console.log('Error', data, status, errorThrown);
+                    swal('Error', 'Error deleting record: ' + errorThrown, 'danger');
+                },
+            });
         }
     });
 }

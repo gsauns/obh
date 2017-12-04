@@ -22,32 +22,9 @@ $(document).ready(function() {
 		$modal.modal();
 	});
 
-	$('button.btn-delete-record').on('click', function () {
-		var id = $('#form_id').val();
-
-		if (id.length > 0) {
-			if (confirm('Are you sure you want to delete this record?')) {
-				$.ajax({
-					url: 'shows.php',
-					type: 'delete',
-					success: function (data, status) {
-						if (data == 'success') 
-							$messagep.addClass('bg-success').html("New show successfully saved.");
-						else 
-							$messagep.addClass('bg-danger').html("Error saving show.<br>" + data);
-	
-						loadShowInfo(true);
-						
-					},
-					error: function (data, status, errorThrown) {
-						console.log('Error', data, status, errorThrown);
-					}
-	
-				});
-			}
-		}
-	});
-
+	// ===================================
+	// Specific Form Submission
+	// ===================================
     $('form#showsform').on('submit', function (e) {
 		e.preventDefault();
 
