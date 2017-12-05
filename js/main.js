@@ -23,7 +23,7 @@ function editDeleteColumn(id, api_path, showDeleteButton, nameval, classes) {
     // returns a <td> with an edit button for that specific entity
     var url         = [location.protocol, '//', location.host, location.pathname].join(''),
         result      = '',
-        itemname    = nameval.replace(/"/g,'&quot;');
+        itemname    = nameval === undefined ? '' : nameval.replace(/"/g,'&quot;');
 
     if (url.indexOf('admin/') > -1) {
         result = '<td class="'+ (classes == null ? '' : classes) + '">' + 
@@ -44,6 +44,7 @@ function editDeleteColumn(id, api_path, showDeleteButton, nameval, classes) {
         result += '</td>';
     }
     else {
+        // custom view options
         if (api_path == "mmj_shows") {
             result = '<td class="'+ (classes == null ? '' : classes) + '">' + 
                         '<button item-id="' + id + 
@@ -52,6 +53,15 @@ function editDeleteColumn(id, api_path, showDeleteButton, nameval, classes) {
                         '" class="btn btn-sm btn-warning" ' +
                         'onclick="retrieveSetlist(this)">' + 
                         'View Setlist</button></td>';
+        }
+        else if (api_path == "songs") {
+            result = '<td class="'+ (classes == null ? '' : classes) + '">' + 
+                '<button item-id="' + id + 
+                '" item-type="songplays" ' +
+                '" item-name="' + itemname + 
+                '" class="btn btn-sm btn-warning" ' +
+                'onclick="retrieveSongplays(this)">' + 
+                'View Plays</button></td>';
         }
     }
 
@@ -188,7 +198,7 @@ function deleteRecord(sender) {
 
 function editSpecificWork(sender, id, type, data) {
     // does extra work based on type of entity.
-    console.log(sender, id, type, data);
+    // console.log(sender, id, type, data);
     switch (type) {
         // SHOWS: just set setlist link URL
         case 'mmj_shows':
@@ -243,6 +253,26 @@ function retrieveSetlist(sender) {
     });
 }
 
+function retrieveSongplays(sender) {
+    var id      = $(sender).attr('item-id'),
+        name    = $(sender).attr('item-name'),
+        promise = new Promise((resolve, reject) => {
+            loadSongplayInfo(id, true, false, resolve, reject);
+        });
+
+    promise.then(function(plays) {
+        if (plays > 0) {
+            $('#showModalLabel').text(name);
+            $('#modalSongplays').modal('show');
+        }
+        else
+            swal('Not Played', 'Song hasn\'t been played at a show.', 'info');
+    })
+    .catch((reason) => {
+        console.log('reject:', reason);
+    });
+}
+
 // calls setlist API (custom) and builds out table
 function loadSetlistinfo (show_id, clearBody, clearNewRow, resolve, reject) {
     $('div.container').append('<div class="spinner"></div>');
@@ -272,14 +302,14 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow, resolve, reject) {
                         $tbody.empty();
 
                     if (Array.isArray(result) && result.length > 0) {
-                        var row, dt;
+                        var row, dt, songlength;
 
                         $('#setlistTitle').text(result[0].headline);
 
                         for (var i = 0; i < result.length; i++) {
                             // don't show if it's just the Show info coming back and no setlist
                             if (result[i].id != null) {
-                                var songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
+                                songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
                                 row = '<tr>' + 
                                     editDeleteColumn(result[i].id, 'mmj_setlists', false, '_', 'edit-row-buttons') +
                                     td(result[i].order) +
@@ -314,9 +344,91 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow, resolve, reject) {
             console.log('Error', data, status, errorThrown);
 
             if (reject)
-                reject(errstring);
+                reject(errorThrown);
             
-            swal('Error', 'There was an error: ' + errstring, 'danger');
+            swal('Error', 'There was an error: ' + errorThrown, 'danger');
+        },
+        complete: function () {
+            $('div.spinner').remove();
+        }
+    });
+}
+
+
+
+function loadSongplayInfo (song_id, clearBody, clearNewRow, resolve, reject) {
+    $('div.container').append('<div class="spinner"></div>');
+
+    if (clearNewRow) {
+        var $footerCells = $('tfoot > tr > td');
+        // TODO: increment order by 1
+        $footerCells.find('input').val('')
+        $footerCells.find('select[name="song_id"]').val('').trigger('change');
+        $footerCells.find('input[name="encore"]').prop('checked', false);
+    }
+
+    $.ajax({
+        url: '../../api-custom.php/songplays/' + song_id,
+        type: 'post',
+        success: function (data, status) {
+            var errstring   = '',
+                $tbody      = $('#tblSongplays > tbody');
+
+            if (status == 'success') {
+                var result;
+                try {
+                    result = JSON.parse(data);
+                    console.log(result);
+
+                    if (clearBody)
+                        $tbody.empty();
+
+                    if (Array.isArray(result) && result.length > 0) {
+                        var row, songlength;
+
+                        for (var i = 0; i < result.length; i++) {
+                            // don't show if it's just the Show info coming back and no setlist
+                            if (result[i].id != null) {
+                                songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
+
+                                row = '<tr>' + 
+                                    editDeleteColumn(result[i].id, 'songplays', false) +
+                                    td(moment(result[i].date).format('MM/DD/YYYY')) +
+                                    td(result[i].headline) +
+                                    td(result[i].order) +
+                                    td(songlength) +
+                                    td(result[i].encore == '1' ? 'Y' : null) +
+                                    td(result[i].notes) +
+                                    '</tr>';
+
+                                $tbody.append(row);
+                            }
+                        }
+                    }
+                }
+                catch (ex) {
+                    errstring = ex.message;
+                }
+            }
+            else 
+                errstring = status;
+
+            if (errstring.length > 0) {
+                if (reject)
+                    reject(errstring);
+
+                swal('Error', 'There was an error: ' + errstring, 'danger');
+            }
+            else if (resolve)
+                resolve(result.length);
+        },
+        error: function (data, status, errorThrown) {
+            console.log('Error', data, status, errorThrown);
+
+            if (reject)
+                reject(errorThrown);
+            
+            swal('Error', 'There was an error: ' + errorThrown, 'danger');
         },
         complete: function () {
             $('div.spinner').remove();

@@ -1,3 +1,9 @@
+@media (min-width: 1024px) {
+    .modal-dialog-l {
+        width: 1000px;
+    }
+}
+
 .form-message {
     padding: 5px;
     margin-top: 10px;

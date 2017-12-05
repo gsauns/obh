@@ -6,7 +6,8 @@ $pw     = $ini['pw'];
 $dbname = $ini['dbname'];
 
 function getSetlistByShowId($show_id) {
-    $result = "SELECT sl.*,
+    if (is_numeric($show_id)) {
+        $result = "SELECT sl.*,
                 shows.headline,
                 shows.date,
                 shows.location,
@@ -20,7 +21,26 @@ function getSetlistByShowId($show_id) {
                 WHERE shows.id = $show_id
                 ORDER BY COALESCE(sl.order,9999)";
 
-    return $result;
+        return $result;
+    }
+    else {
+        return "";
+    }
+}
+
+function getSongPlaysbySongId($song_id) {
+    if (is_numeric($song_id)) {
+        $result = "SELECT *
+                FROM songplays
+                WHERE song_id = $song_id
+                ORDER BY date DESC,
+                `order`";
+
+        return $result;
+    }
+    else {
+        return "";
+    }
 }
 
 $mysqli = new mysqli("localhost", "meganmeg_admin", $pw, "meganmeg_wedding");
@@ -40,6 +60,10 @@ if (mysqli_connect_errno()) {
 switch ($customtype) {
     case "setlists":
         $sql = getSetlistByShowId($key);
+        break;
+
+    case "songplays":
+        $sql = getSongPlaysbySongId($key);
         break;
 }
 
