@@ -49,6 +49,7 @@
                 </div>
                 <table id="tblShows" class="table table-striped">
                     <thead>
+                        <th></th>
                         <th>Date</th>
                         <th>Show</th>
                         <th>Location</th>
@@ -61,11 +62,42 @@
         </div>
         <!-- Main Container end -->
 
+        <!-- Modal start -->
+        <div class="modal fade" id="modalSetlist" tabindex="-1" role="dialog" aria-labelledby="showModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="showModalLabel">Setlist</h4>
+                        </div>
+                        <div class="modal-body">
+                            <table id="tblSetlist" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Song</th>
+                                        <th>Length</th>
+                                        <th>Encore?</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal end -->
+
         <script type="text/javascript" src="../../js/vendor/jquery/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="../../js/vendor/bootstrap/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
         <script type="text/javascript" src="../../js/vendor/jquery/jquery-ui.min.js"></script>
         <script type="text/javascript" src="../../js/vendor/moment/moment.min.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <script type="text/javascript" src="../../js/main.js"></script>
         <script type="text/javascript" src="../../js/shows.js"></script>
     </body>

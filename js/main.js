@@ -24,6 +24,7 @@ function editDeleteColumn(id, api_path, showDeleteButton, nameval, classes) {
     var url         = [location.protocol, '//', location.host, location.pathname].join(''),
         result      = '',
         itemname    = nameval.replace(/"/g,'&quot;');
+
     if (url.indexOf('admin/') > -1) {
         result = '<td class="'+ (classes == null ? '' : classes) + '">' + 
             '<button item-id="' + id + 
@@ -41,6 +42,17 @@ function editDeleteColumn(id, api_path, showDeleteButton, nameval, classes) {
                         '</button>';
 
         result += '</td>';
+    }
+    else {
+        if (api_path == "mmj_shows") {
+            result = '<td class="'+ (classes == null ? '' : classes) + '">' + 
+                        '<button item-id="' + id + 
+                        '" item-type="setlists" ' +
+                        '" item-name="' + itemname + 
+                        '" class="btn btn-sm btn-warning" ' +
+                        'onclick="retrieveSetlist(this)">' + 
+                        'View Setlist</button></td>';
+        }
     }
 
     return result;
@@ -209,4 +221,105 @@ function getParameterByName(name) {
     // gets query string parameter
     var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function retrieveSetlist(sender) {
+    var id      = $(sender).attr('item-id'),
+        name    = $(sender).attr('item-name'),
+        promise = new Promise((resolve, reject) => {
+            loadSetlistinfo(id, true, false, resolve, reject);
+        });
+
+    promise.then(function(setlistId) {
+        if (setlistId) {
+            $('#showModalLabel').text(name);
+            $('#modalSetlist').modal('show');
+        }
+        else
+            swal('Empty Setlist', 'No setlist entered for this show.', 'info');
+    })
+    .catch((reason) => {
+        console.log('reject:', reason);
+    });
+}
+
+// calls setlist API (custom) and builds out table
+function loadSetlistinfo (show_id, clearBody, clearNewRow, resolve, reject) {
+    $('div.container').append('<div class="spinner"></div>');
+
+    if (clearNewRow) {
+        var $footerCells = $('tfoot > tr > td');
+        // TODO: increment order by 1
+        $footerCells.find('input').val('')
+        $footerCells.find('select[name="song_id"]').val('').trigger('change');
+        $footerCells.find('input[name="encore"]').prop('checked', false);
+    }
+
+    $.ajax({
+        url: '../../api-custom.php/setlists/' + show_id,
+        type: 'post',
+        success: function (data, status) {
+            var errstring   = '',
+                $tbody      = $('#tblSetlist > tbody');
+
+            if (status == 'success') {
+                var result;
+                try {
+                    result = JSON.parse(data);
+                    console.log(result);
+
+                    if (clearBody)
+                        $tbody.empty();
+
+                    if (Array.isArray(result) && result.length > 0) {
+                        var row, dt;
+
+                        $('#setlistTitle').text(result[0].headline);
+
+                        for (var i = 0; i < result.length; i++) {
+                            // don't show if it's just the Show info coming back and no setlist
+                            if (result[i].id != null) {
+                                var songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
+                                row = '<tr>' + 
+                                    editDeleteColumn(result[i].id, 'mmj_setlists', false, '_', 'edit-row-buttons') +
+                                    td(result[i].order) +
+                                    td(result[i].name) +
+                                    td(songlength) +
+                                    td(result[i].encore == '1' ? 'Y' : null) +
+                                    td(result[i].notes) +
+                                    '</tr>';
+
+                                $tbody.append(row);
+                            }
+                        }
+                    }
+                }
+                catch (ex) {
+                    errstring = ex.message;
+                }
+            }
+            else 
+                errstring = status;
+
+            if (errstring.length > 0) {
+                if (reject)
+                    reject(errstring);
+
+                swal('Error', 'There was an error: ' + errstring, 'danger');
+            }
+            else if (resolve)
+                resolve((result.length > 0 ? result[0].id : null));
+        },
+        error: function (data, status, errorThrown) {
+            console.log('Error', data, status, errorThrown);
+
+            if (reject)
+                reject(errstring);
+            
+            swal('Error', 'There was an error: ' + errstring, 'danger');
+        },
+        complete: function () {
+            $('div.spinner').remove();
+        }
+    });
 }

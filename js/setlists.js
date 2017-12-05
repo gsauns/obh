@@ -24,8 +24,6 @@ $(document).ready(function() {
         var row = $(e.currentTarget).parents('tr');
         // TODO: get row values and post
         submitSetlistRecord($(row), false);
-
-
     });
 
     $('#tblSetlist').on('click', 'td.edit-row-buttons > .delete-btn', function (e) {
@@ -63,75 +61,7 @@ $(document).ready(function() {
     });
 });
 
-function loadSetlistinfo (show_id, clearBody, clearNewRow) {
-    $('div.container').append('<div class="spinner"></div>');
-
-    if (clearNewRow) {
-        var $footerCells = $('tfoot > tr > td');
-        // TODO: increment order by 1
-        $footerCells.find('input').val('')
-        $footerCells.find('select[name="song_id"]').val('').trigger('change');
-        $footerCells.find('input[name="encore"]').prop('checked', false);
-    }
-
-    $.ajax({
-        url: '../../api-custom.php/setlists/' + show_id,
-        type: 'post',
-        success: function (data, status) {
-            var errstring   = '',
-                $tbody      = $('#tblSetlist > tbody');
-
-            if (status == 'success') {
-                var result;
-                try {
-                    result = JSON.parse(data);
-                    console.log(result);
-
-                    if (clearBody)
-                        $tbody.empty();
-
-                    if (Array.isArray(result) && result.length > 0) {
-                        var row, dt;
-
-                        $('#setlistTitle').text(result[0].headline);
-
-                        for (var i = 0; i < result.length; i++) {
-                            // don't show if it's just the Show info coming back and no setlist
-                            if (result[i].id != null) {
-                                var songlength = result[i]['length'] && result[i]['length'].length > 0 ? moment().startOf('day').seconds(result[i]['length']).format('m:ss') : null;
-                                row = '<tr>' + 
-                                    editColumn(result[i].id, 'mmj_setlists', false, '_', 'edit-row-buttons') +
-                                    td(result[i].order) +
-                                    td(result[i].name) +
-                                    td(songlength) +
-                                    td(result[i].encore == '1' ? 'Y' : null) +
-                                    td(result[i].notes) +
-                                    '</tr>';
-
-                                $tbody.append(row);
-                            }
-                        }
-                    }
-                }
-                catch (ex) {
-                    errstring = ex.message;
-                }
-            }
-            else 
-                errstring = status;
-
-            if (errstring.length > 0)
-                swal('Error', 'There was an error: ' + errstring, 'danger');
-        },
-        error: function (data, status, errorThrown) {
-            console.log('Error', data, status, errorThrown);
-            alert('There was an error: ' + errorThrown);
-        },
-        complete: function () {
-            $('div.spinner').remove();
-        }
-    });
-}
+// loadSetlistInfo moved to main.js
 
 function initSelect2Setlist($parent) {
     $parent.find('select[name="song_id"]').select2({
