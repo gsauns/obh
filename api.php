@@ -19,12 +19,7 @@ if (mysqli_connect_errno()) {
     exit();
 }
 
-if (is_numeric($key)) {
-    $sql = "select * from $table".($key?" WHERE id=$key":'');
-}
-else {
-    $sql = "";
-}
+$sql = "select * from $table".($key?" WHERE id=$key":'');
 
 // excecute SQL statement
 $result = mysqli_query($mysqli,$sql);
