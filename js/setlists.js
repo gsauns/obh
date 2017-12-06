@@ -45,11 +45,11 @@ $(document).ready(function() {
                         if (data == 'delete')
                             loadSetlistinfo(getParameterByName('show'), true, false);
                         else
-                            swal('SQL Error', 'Error deleting entry: ' + data, 'danger');
+                            swal('SQL Error', 'Error deleting entry: ' + data, 'error');
                     },
                     error: function (data, status, errorThrown) {
                         console.log('Error', data, status, errorThrown);
-                        swal('Error', 'Error deleting entry: ' + errorThrown, 'danger');
+                        swal('Error', 'Error deleting entry: ' + errorThrown, 'error');
                     },
                 })
             }

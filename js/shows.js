@@ -56,11 +56,11 @@ function loadShowInfo (clearBody) {
                 errstring = status;
 
             if (errstring.length > 0)
-                swal('Error', 'There was an error: ' + errstring, 'danger');
+                swal('Error', 'There was an error: ' + errstring, 'error');
         },
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
-            swal('Error', 'There was an error: ' + errorThrown, 'danger');
+            swal('Error', 'There was an error: ' + errorThrown, 'error');
         },
         complete: function () {
             $('div.spinner').remove();

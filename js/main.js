@@ -21,11 +21,10 @@ function setModalHeader($modal, hdr) {
 
 function editDeleteColumn(id, api_path, showDeleteButton, nameval, classes) {
     // returns a <td> with an edit button for that specific entity
-    var url         = [location.protocol, '//', location.host, location.pathname].join(''),
-        result      = '',
+    var result      = '',
         itemname    = nameval === undefined ? '' : nameval.replace(/"/g,'&quot;');
 
-    if (url.indexOf('admin/') > -1) {
+    if (location.pathname.indexOf('admin/') > -1) {
         result = '<td class="'+ (classes == null ? '' : classes) + '">' + 
             '<button item-id="' + id + 
             '" item-type="' + api_path + 
@@ -90,6 +89,28 @@ function newButtonType(type) {
     $('.btn-new').attr('item-type',type);
 }
 
+function songSelect2($sel) {
+    $sel.select2({
+        ajax: {
+            url: '../../api-search.php/songs/',
+            dataType: 'json'
+        },
+        minimumInputLength: 1,
+        placeholder: {
+            // placeholder required for Select2 allowClear bug
+            id: "",
+            placeholder: "Song..."
+        },
+        allowClear: true,
+        selectOnClose: true,
+        language: {
+            noResults: function () {
+                return 'No matching songs found.';
+            }
+        }
+    });
+}
+
 function editRecord(sender) {
     // handles when edit button is clicked on a row
     var id 		    = $(sender).attr('item-id'),
@@ -136,11 +157,11 @@ function editRecord(sender) {
                 errstring = status;
 
             if (errstring.length > 0)
-                swal('Error', 'There was an error: ' + errstring, 'danger');
+                swal('Error', 'There was an error: ' + errstring, 'error');
         },
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
-            swal('Error', 'There was an error: ' + errorThrown, 'danger');
+            swal('Error', 'There was an error: ' + errorThrown, 'error');
         }
     });
 }
@@ -185,11 +206,11 @@ function deleteRecord(sender) {
                             callback(true);
                     }
                     else
-                        swal('SQL Error', 'Error deleting record: ' + data, 'danger');
+                        swal('SQL Error', 'Error deleting record: ' + data, 'error');
                 },
                 error: function (data, status, errorThrown) {
                     console.log('Error', data, status, errorThrown);
-                    swal('Error', 'Error deleting record: ' + errorThrown, 'danger');
+                    swal('Error', 'Error deleting record: ' + errorThrown, 'error');
                 },
             });
         }
@@ -335,7 +356,7 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow, resolve, reject) {
                 if (reject)
                     reject(errstring);
 
-                swal('Error', 'There was an error: ' + errstring, 'danger');
+                swal('Error', 'There was an error: ' + errstring, 'error');
             }
             else if (resolve)
                 resolve((result.length > 0 ? result[0].id : null));
@@ -346,7 +367,7 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow, resolve, reject) {
             if (reject)
                 reject(errorThrown);
             
-            swal('Error', 'There was an error: ' + errorThrown, 'danger');
+            swal('Error', 'There was an error: ' + errorThrown, 'error');
         },
         complete: function () {
             $('div.spinner').remove();
@@ -417,7 +438,7 @@ function loadSongplayInfo (song_id, clearBody, clearNewRow, resolve, reject) {
                 if (reject)
                     reject(errstring);
 
-                swal('Error', 'There was an error: ' + errstring, 'danger');
+                swal('Error', 'There was an error: ' + errstring, 'error');
             }
             else if (resolve)
                 resolve(result.length);
@@ -428,7 +449,7 @@ function loadSongplayInfo (song_id, clearBody, clearNewRow, resolve, reject) {
             if (reject)
                 reject(errorThrown);
             
-            swal('Error', 'There was an error: ' + errorThrown, 'danger');
+            swal('Error', 'There was an error: ' + errorThrown, 'error');
         },
         complete: function () {
             $('div.spinner').remove();

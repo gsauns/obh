@@ -1,3 +1,4 @@
+/* Specifics ------------*/
 @media (min-width: 1024px) {
     .modal-dialog-l {
         width: 1000px;
@@ -19,6 +20,11 @@
     width: auto;
 }
 
+/* Utility ------------*/
+.full-width {
+    width: 100%;
+}
+
 .p-t-xs {
     padding-top: 5px;
 }
@@ -35,7 +41,7 @@
     margin-left: 10px;
 }
 
-/* Setlist grid input widths */
+/* Setlist grid input widths --------- */
 .grid-setlist-order {
     max-width: 70px;
 }

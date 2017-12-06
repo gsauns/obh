@@ -11,6 +11,7 @@ $mysqli = new mysqli("localhost", "meganmeg_admin", $pw, "meganmeg_wedding");
 $method = $_SERVER['REQUEST_METHOD'];
 $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 $table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+$param = reset($request);
 $key = array_shift($request)+0;
 
 // check connection 
@@ -20,7 +21,26 @@ if (mysqli_connect_errno()) {
 }
 
 $sql = "select * from $table";
-if (is_numeric($key)) {
+
+// check if array param has been passed
+$ids = explode(",", $param);
+
+if (count($ids) > 1) {
+    // is this an array?
+    $sql = $sql . " WHERE id IN (";
+    $inclause = "";
+    foreach ($ids as &$id) {
+        if (is_numeric($id)) {
+            $inclause = $inclause . $id . ",";
+        }
+    }
+    $inlength = strlen($inclause);
+    if ($inlength > 0) {
+        $sql = $sql . substr($inclause, 0, $inlength-1);
+    }
+    $sql = $sql . ")";
+}
+elseif (is_numeric($key)) {
     $sql = $sql . ($key?" WHERE id=$key":'');
 }
 
