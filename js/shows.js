@@ -1,9 +1,11 @@
 'use strict';
 
+var placeautocomplete;
 
 $(document).ready(function() {
     loadShowInfo(null, false);
     newButtonType('Show');
+    initGoogleMap('gmaps');
 
     var $search = $('#searchShows');
     if ($search.length)
@@ -88,4 +90,72 @@ function loadShowInfo (url, clearBody) {
         }
 
     });
+}
+
+function initGoogleMap(ctrl) {
+    var input = document.getElementById(ctrl);
+    placeautocomplete = new google.maps.places.Autocomplete(input);
+
+    placeautocomplete.addListener('place_changed', fillInAddress);
+}
+
+function fillInAddress() {
+    // Get the place details from the autocomplete object.
+    var place       = placeautocomplete.getPlace(),
+        $form       = $('#showsform'),
+        location    = '',
+        address     = '',
+        city        = '',
+        state       = '',
+        zip         = '',
+        country     = '',
+        area        = '',
+        item, placetype;
+
+    console.log(place);
+
+    for (var i = 0; i < place.address_components.length; i++) {
+        item = place.address_components[i];
+        placetype = item.types[0];
+
+        switch (placetype) {
+            case 'street_number':
+                address = address + item.short_name + ' ';
+                break;
+            // street
+            case 'route':
+                address = address + item.short_name;
+                break;
+            // city
+            case 'locality':
+                city = item.short_name;
+                break;
+            // state
+            case 'administrative_area_level_1':
+                state = item.short_name;
+                break;
+            case 'administrative_area_level_2':
+                area = item.short_name;
+                break;
+            case 'country':
+                country = item.long_name;
+                break;
+            case 'postal_code':
+                zip = item.short_name;
+                break;
+        }
+    }
+
+    // in case empty city, use greater area
+    if (state.length == 0)
+    state = area;
+
+    // set values
+    $form.find('#google_place_id').val(place.id);
+    $form.find('#location').val(place.name);
+    $form.find('#address').val(address);
+    $form.find('#city').val(city);
+    $form.find('#state').val(state);
+    $form.find('#zip').val(zip);
+    $form.find('#country').val(country);
 }

@@ -200,6 +200,7 @@ function editSpecificWork(sender, id, type, data) {
     // console.log(sender, id, type, data);
     switch (type) {
         // SHOWS: just set setlist link URL
+        // - init Maps API
         case 'mmj_shows':
             $('#setlist_link').attr('href', '../admin/setlists.html?show=' + id);
             break;

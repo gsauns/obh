@@ -50,6 +50,24 @@
     max-width: 70px;
 }
 
+/* Google Maps in modal fix ----------- */
+.pac-container {
+    z-index: 1051 !important;
+}
+/* .pac-container {
+    background-color: #FFF;
+    z-index: 2;
+    position: fixed;
+    display: inline-block;
+    float: left;
+}
+.modal {
+    z-index: 2;   
+}
+.modal-backdrop {
+    z-index: 1;        
+}​ */
+
 /* Spinner. Credit: http://tobiasahlin.com/spinkit/ */
 .spinner {
     position: fixed;
