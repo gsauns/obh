@@ -89,28 +89,6 @@ function newButtonType(type) {
     $('.btn-new').attr('item-type',type);
 }
 
-function songSelect2($sel) {
-    $sel.select2({
-        ajax: {
-            url: '../../api-search.php/songs/',
-            dataType: 'json'
-        },
-        minimumInputLength: 1,
-        placeholder: {
-            // placeholder required for Select2 allowClear bug
-            id: "",
-            placeholder: "Song..."
-        },
-        allowClear: true,
-        selectOnClose: true,
-        language: {
-            noResults: function () {
-                return 'No matching songs found.';
-            }
-        }
-    });
-}
-
 function editRecord(sender) {
     // handles when edit button is clicked on a row
     var id 		    = $(sender).attr('item-id'),
@@ -294,6 +272,28 @@ function retrieveSongplays(sender) {
     });
 }
 
+function singleSearchSelect2($sel, type,) {
+    $sel.select2({
+        ajax: {
+            url: '../../api-search.php/' + type + '/',
+            dataType: 'json'
+        },
+        minimumInputLength: 1,
+        placeholder: {
+            // placeholder required for Select2 allowClear bug
+            id: "",
+            placeholder: "Type to search"
+        },
+        allowClear: true,
+        selectOnClose: true,
+        language: {
+            noResults: function () {
+                return 'No matching ' + type + ' found.';
+            }
+        }
+    });
+}
+
 // calls setlist API (custom) and builds out table
 function loadSetlistinfo (show_id, clearBody, clearNewRow, resolve, reject) {
     $('div.container').append('<div class="spinner"></div>');
@@ -374,8 +374,6 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow, resolve, reject) {
         }
     });
 }
-
-
 
 function loadSongplayInfo (song_id, clearBody, clearNewRow, resolve, reject) {
     $('div.container').append('<div class="spinner"></div>');

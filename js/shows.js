@@ -2,15 +2,36 @@
 
 
 $(document).ready(function() {
-    loadShowInfo(false);
+    loadShowInfo(null, false);
     newButtonType('Show');
+
+    var $search = $('#searchShows');
+    if ($search.length)
+        singleSearchSelect2($search, 'shows');
+
+    // show search select2
+    $('div.search-group').on('change','#searchShows', function (e) {
+        var ids = $(e.currentTarget).val();
+
+        if (Array.isArray(ids)) {
+            if (ids.length == 0)
+                loadShowInfo(null, true);
+            else {
+                // call API and get selected songs only
+                var showlist = ids.join(',');
+                loadShowInfo('../../api.php/mmj_shows/' + showlist, true);
+            }
+        }
+    });
 });
 
-function loadShowInfo (clearBody) {
+function loadShowInfo (url, clearBody) {
     $('div.container').append('<div class="spinner"></div>');
+    if (url == null)
+        url = '../../api.php/mmj_shows';
 
     $.ajax({
-        url: '../../api.php/mmj_shows',
+        url: url,
         type: 'post',
         success: function (data, status) {
             var errstring   = '',

@@ -5,16 +5,15 @@ $un     = $ini['un'];
 $pw     = $ini['pw'];
 $dbname = $ini['dbname'];
 
-// function autocompleteShows($text) {
-//     $result = "SELECT id,
-//                     headline AS text
-//                 FROM mmj_shows
-//                 WHERE headline LIKE '%$text%'";
-
+function autocompleteShows($text) {
+    $result = "SELECT id,
+                    headline AS text
+                FROM mmj_shows
+                WHERE headline LIKE '%$text%'";
     
 
-//     return $result;
-// }
+    return $result;
+}
 
 function autocompleteSongs($text) {
     $result = "SELECT id,".
