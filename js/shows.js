@@ -120,15 +120,16 @@ function fillInAddress() {
 
         switch (placetype) {
             case 'street_number':
-                address = address + item.short_name + ' ';
+                address = item.short_name + ' ';
                 break;
             // street
             case 'route':
                 address = address + item.short_name;
                 break;
             // city
+            case 'sublocality_level_1':
             case 'locality':
-                city = item.short_name;
+                city = (city.length > 0 ? ', ' : '') + item.short_name;
                 break;
             // state
             case 'administrative_area_level_1':

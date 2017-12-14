@@ -159,16 +159,16 @@ function deleteRecord(sender) {
         if (willDelete) {
             // delete
             var idx = type.indexOf('mmj_'),
-            apitype = (idx >= 0 ? type.substring(idx + 4) : type) + '.php/',
-            callback;
+                apitype = (idx >= 0 ? type.substring(idx + 4) : type) + '.php/',
+                callback;
 
             switch (type) {
                 case 'mmj_shows':
-                    callback = loadShowInfo;
+                    callback = function() { loadShowInfo(null, true); };
                     break;
                 case 'mmj_songs':
                 case 'songs':
-                    callback = loadSongInfo;
+                    callback = function() { loadSongInfo(null, true); };
                     break;
                 default:
                     callback = null;
@@ -180,8 +180,8 @@ function deleteRecord(sender) {
                 type: 'delete',
                 success: function (data) {
                     if (data == 'delete') {
-                        if (callback != null)
-                            callback(true);
+                        if (callback)
+                            callback();
                     }
                     else
                         swal('SQL Error', 'Error deleting record: ' + data, 'error');

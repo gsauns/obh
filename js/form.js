@@ -57,9 +57,14 @@ $(document).ready(function() {
 
 			valid = false;
 		}
+
+		// check if Maps info was deleted
+		if ($('#gmaps').val().length > 0)
+			$('#google_place_id').val('');
 		
 		// If valid, submit
-		sendForm('show', 'shows', $(this), $messagep, valid, 'post', loadShowInfo);
+		var callback = function() { loadShowInfo(null, true); };
+		sendForm('show', 'shows', $(this), $messagep, valid, 'post', callback);
 	});
 
 	$('form#songsform').on('submit', function (e) {
@@ -83,8 +88,9 @@ $(document).ready(function() {
 
 			valid = false;
 		}
-        
-        sendForm('song', 'songs', $(this), $messagep, valid, 'post', loadSongInfo);
+		
+		var callback = function() { loadSongInfo(null, true); };
+        sendForm('song', 'songs', $(this), $messagep, valid, 'post', callback);
 		
 	});
 });
@@ -110,8 +116,9 @@ function sendForm(entity, plural, $form, $messagep, valid, verb, callback) {
 				else 
 					// error
 					$messagep.addClass('bg-danger').html("Error saving song.<br>" + data);
-					
-				callback(true);
+				
+				if (callback)
+					callback();
 			},
 			error: function (data, status, errorThrown) {
 				console.log('Error', data, status, errorThrown);
