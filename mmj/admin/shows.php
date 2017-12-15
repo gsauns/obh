@@ -15,34 +15,34 @@ $key = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 
 switch ($method) {
     case 'POST':
-        $headline           = $mysqli->real_escape_string($_POST['headline']);
-        $date               = $mysqli->real_escape_string(date('Y-m-d', strtotime($_POST['date'])));
-        $google_place_id    = $mysqli->real_escape_string($_POST['google_place_id']);
-        $google_place_coords = $mysqli->real_escape_string($_POST['google_place_coords']);
-        $location           = $mysqli->real_escape_string($_POST['location']);
-        $address            = $mysqli->real_escape_string($_POST['address']);
-        $city               = $mysqli->real_escape_string($_POST['city']);
-        $state              = $mysqli->real_escape_string($_POST['state']);
-        $zip                = $mysqli->real_escape_string($_POST['zip']);
-        $country            = $mysqli->real_escape_string($_POST['country']);
-        $notes 			    = $mysqli->real_escape_string($_POST['notes']);
-        $user               = "username";
-        $id                 = $mysqli->real_escape_string($_POST['id']);
+        $headline               = "'" . $mysqli->real_escape_string($_POST['headline']) . "'";
+        $date                   = "'" . $mysqli->real_escape_string(date('Y-m-d', strtotime($_POST['date']))) . "'";
+        $google_place_id        = empty($_POST['google_place_id']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['google_place_id']) . "'";
+        $google_place_coords    = empty($_POST['google_place_coords']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['google_place_coords']) . "'";
+        $location               = empty($_POST['location']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['location']) . "'";
+        $address                = empty($_POST['address']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['address']) . "'";
+        $city                   = empty($_POST['city']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['city']) . "'";
+        $state                  = empty($_POST['state']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['state']) . "'";
+        $zip                    = empty($_POST['zip']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['zip']) . "'";
+        $country                = empty($_POST['country']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['country']) . "'";
+        $notes 			        = empty($_POST['notes']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['notes']) . "'";
+        $user                   = "'username'";
+        $id                     = $mysqli->real_escape_string($_POST['id']);
 
         if (strlen($id) > 0) {
             $sql = "UPDATE mmj_shows ".
-                " SET headline =  '$headline', ".
-                " date = '$date', ".
-                " google_place_id = '$google_place_id', ".
-                " google_place_coords = '$google_place_coords', ".
-                " location = '$location', ".
-                " address = '$address', ".
-                " city = '$city', ".
-                " state = '$state', ".
-                " zip = '$zip', ".
-                " country = '$country', ".
-                " notes = '$notes', ".
-                " updated_by = '$user', ".
+                " SET headline =  $headline, ".
+                " date = $date, ".
+                " google_place_id = $google_place_id, ".
+                " google_place_coords = $google_place_coords, ".
+                " location = $location, ".
+                " address = $address, ".
+                " city = $city, ".
+                " state = $state, ".
+                " zip = $zip, ".
+                " country = $country, ".
+                " notes = $notes, ".
+                " updated_by = $user, ".
                 " updated = NOW() ".
                 " WHERE id = $id";
 
@@ -51,7 +51,7 @@ switch ($method) {
         else {
             $sql = "INSERT INTO mmj_shows ".
                 "(headline, date, google_place_id, google_place_coords, location, address, city, state, zip, country, notes, created_by, created) ".
-                "VALUES ('$headline', '$date', '$google_place_id', '$google_place_coords', '$location', '$address', '$city', '$state', '$zip', '$country','$notes', '$user', NOW())";
+                "VALUES ($headline, $date, $google_place_id, $google_place_coords, $location, $address, $city, $state, $zip, $country,$notes, $user, NOW())";
 
             $success_msg = "insert";
         }

@@ -10,28 +10,28 @@ if (mysqli_connect_errno()) {
     exit();
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+//$data = json_decode(file_get_contents('php://input'), true);
 $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 $key = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 
 switch ($method) {
     case 'POST':
-        $name               = $mysqli->real_escape_string($_POST['name']);
-        $original_artist    = $mysqli->real_escape_string($_POST['original_artist']);
-        $original_album     = $mysqli->real_escape_string($_POST['original_album']);
+        $name               = "'" . $mysqli->real_escape_string($_POST['name']) . "'";
+        $original_artist    = empty($_POST['original_artist']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['original_artist']) . "'";
+        $original_album     = empty($_POST['original_album']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['original_album']) . "'";
         $year_released      = empty($_POST['year_released']) ? "NULL" : $mysqli->real_escape_string($_POST['year_released']);
-        $notes 			    = $mysqli->real_escape_string($_POST['notes']);
-        $user               = "username";
+        $notes 			    = empty($_POST['notes']) ? "NULL" : "'" . $mysqli->real_escape_string($_POST['notes']) . "'";
+        $user               = "'username'";
         $id                 = $mysqli->real_escape_string($_POST['id']);
 
         if (strlen($id) > 0) {
             $sql = "UPDATE mmj_songs ".
-                " SET name =  '$name', ".
-                " original_artist = '$original_artist', ".
-                " original_album = '$original_album', ".
+                " SET name = $name, ".
+                " original_artist = $original_artist, ".
+                " original_album = $original_album, ".
                 " year_released = $year_released, ".
-                " notes = '$notes', ".
-                " updated_by = '$user', ".
+                " notes = $notes, ".
+                " updated_by = $user, ".
                 " updated = NOW() ".
                 " WHERE id = $id";
 
@@ -40,7 +40,7 @@ switch ($method) {
         else {
             $sql = "INSERT INTO mmj_songs ".
                 "(name, original_artist, original_album, year_released, notes, created_by, created) ".
-                "VALUES ('$name', '$original_artist', '$original_album', $year_released, '$notes', '$user', NOW())";
+                "VALUES ($name, $original_artist, $original_album, $year_released, $notes, $user, NOW())";
 
             $success_msg = "insert";
         }
@@ -59,6 +59,7 @@ switch ($method) {
         break;
 }
 
+//printf($sql);
 if ($mysqli->query($sql)) {
     if ($success_msg == "insert") {
         $newid = $mysqli->insert_id;

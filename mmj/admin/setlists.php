@@ -18,11 +18,11 @@ switch ($method) {
     case 'POST':
         $show_id        = $mysqli->real_escape_string($data['show_id']);
         $song_id        = $mysqli->real_escape_string($data['song_id']);
-        $order          = $mysqli->real_escape_string($data['order']);
+        $order          = empty($data['order']) ? "NULL" : $mysqli->real_escape_string($data['order']);
         $length         = empty($data['length']) ? "NULL" : $mysqli->real_escape_string($data['length']);
         $encore         = $mysqli->real_escape_string($data['encore']);
         $notes 		    = empty($data['notes']) ? "NULL" : "'".$mysqli->real_escape_string($data['notes'])."'";
-        $user           = "username";
+        $user           = "'username'";
         $id             = $mysqli->real_escape_string($data['id']);
 
         
@@ -35,7 +35,7 @@ switch ($method) {
                 " `length` = $length, ".
                 " encore = $encore, ".
                 " notes = $notes, ".
-                " updated_by = '$user', ".
+                " updated_by = $user, ".
                 " updated = NOW() ".
                 " WHERE id = $id";
 
@@ -44,7 +44,7 @@ switch ($method) {
         else {
             $sql = "INSERT INTO mmj_setlists ".
                 "(show_id, song_id, `order`, `length`, encore, notes, created_by, created) ".
-                "VALUES ($show_id, $song_id, $order, $length, $encore, $notes, '$user', NOW())";
+                "VALUES ($show_id, $song_id, $order, $length, $encore, $notes, $user, NOW())";
 
             $success_msg = "insert";
         }       

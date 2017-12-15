@@ -100,8 +100,7 @@ function editSetlistInline(sender, id, data) {
     }
 
     initSelect2Setlist($tr);
-
-    console.log(data);
+    //console.log(data);
 
     $tr.find('input[name="order"]').val(data['order']);
     //$tr.find('select[name="song_id"]').val(data['song_id']);
