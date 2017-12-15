@@ -119,6 +119,14 @@ function editRecord(sender) {
                                 $(':not(tfoot *)[name="' + field + '"]').val(record[field]);
                             }
                         }
+
+                        if (record.hasOwnProperty('google_place_id')) {
+                            // has maps ID, get place info
+                            var place_id = record['google_place_id'];
+                            if (place_id && place_id.length > 0) {
+                                $('#gmaps').val(record['location']);
+                            }
+                        }
                     }
                     // do extra work for specific entity types
                     editSpecificWork(sender, id, type, data);
@@ -218,7 +226,7 @@ function editSpecificWork(sender, id, type, data) {
 function clearEntryForms(clearFields) {
     // clears out all form fields.
 	$('div.form-group').removeClass('bg-danger');
-	$('p.help-block').empty();
+	$('p.help-block').not('.dont-clear-help').empty();
     $('p#form-message').removeClass('bg-danger bg-success text-danger text-success').empty();
 
     if (clearFields) {

@@ -63,7 +63,6 @@
                             <th>Date</th>
                             <th>Show</th>
                             <th>Location</th>
-                            <th>Address</th>
                             <th>Notes</th>
                         </tr>
                     </thead>
@@ -97,8 +96,10 @@
                                 </div>
                                 <div class="form-group col-xs-12">
                                     <label for="location">Location (Maps Lookup)</label>
+                                    <p class="help-block dont-clear-help">Google Maps search. Finding a place will populate other fields &amp; save special Maps info to the database.</p>
                                     <input type="text" id="gmaps" class="form-control" onkeydown="if($('.pac-container').is(':visible') && event.keyCode == 13) {event.preventDefault();}" />
                                     <input type="hidden" id="google_place_id" name="google_place_id" />
+                                    <input type="hidden" id="google_place_coords" name="google_place_coords" />
                                     <p class="help-block"></p>
                                 </div>
                                 <div class="form-group col-xs-12">

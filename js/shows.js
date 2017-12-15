@@ -48,28 +48,42 @@ function loadShowInfo (url, clearBody) {
                         $tbody.empty();
 
                     if (Array.isArray(result) && result.length > 0) {
-                        var row, dt;
+                        var row, dt, location;
 
                         for (var i = 0; i < result.length; i++) {
                             dt = new Date(result[i].date);
+                            if (result[i].google_place_id && result[i].google_place_coords && result[i].location) {
+                                location = '<a href="https://www.google.com/maps/search/?api=1&query=' +
+                                            result[i].google_place_coords +
+                                            '&query_place_id=' +
+                                            result[i].google_place_id + 
+                                            '" target="_blank">' +
+                                            result[i].location + 
+                                            '</a>';
+                            }
+                            else
+                                location = result[i].location; 
 
                             row = '<tr>' + 
                                 editDeleteColumn(result[i].id, 'mmj_shows', true, result[i].headline) +
                                 td(moment(result[i].date).format('MM/DD/YYYY')) +
                                 td(result[i].headline) +
-                                td(result[i].location) +
-                                (result[i] && result[i].address.length > 0 ? 
-                                    td('<a href="https://maps.google.com/maps?q=' + 
-                                    result[i].address + 
-                                    '" target="_blank">' + 
-                                    result[i].address + 
-                                    '</a>') : td(result[i].address)) +
+                                // td(result[i].location) +
+                                // (result[i] && result[i].address.length > 0 ? 
+                                //     td('<a href="https://maps.google.com/maps?q=' + 
+                                //     result[i].address + 
+                                //     '" target="_blank">' + 
+                                //     result[i].address + 
+                                //     '</a>') : td(result[i].address)) +
+                                td(location) +
                                 td(result[i].notes) +
                                 '</tr>';
 
                             $tbody.append(row);
                         }
                     }
+                    else
+                        $tbody.append(emptyRow(5));
                 }
                 catch (ex) {
                     errstring = ex.message;
@@ -120,7 +134,7 @@ function fillInAddress() {
 
         switch (placetype) {
             case 'street_number':
-                address = item.short_name + ' ';
+                address = item.short_name + ' ' + address;
                 break;
             // street
             case 'route':
@@ -149,10 +163,12 @@ function fillInAddress() {
 
     // in case empty city, use greater area
     if (state.length == 0)
-    state = area;
+        state = area;
 
     // set values
+    var coords = place.geometry.location.lat() + ',' + place.geometry.location.lng();
     $form.find('#google_place_id').val(place.id);
+    $form.find('#google_place_coords').val(coords);
     $form.find('#location').val(place.name);
     $form.find('#address').val(address);
     $form.find('#city').val(city);

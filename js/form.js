@@ -59,8 +59,10 @@ $(document).ready(function() {
 		}
 
 		// check if Maps info was deleted
-		if ($('#gmaps').val().length > 0)
+		if ($('#gmaps').val().length == 0) {
 			$('#google_place_id').val('');
+			$('#google_place_coords').val('');
+		}
 		
 		// If valid, submit
 		var callback = function() { loadShowInfo(null, true); };
