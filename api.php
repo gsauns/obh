@@ -44,7 +44,7 @@ elseif (is_numeric($key)) {
     $sql = $sql . ($key?" WHERE id=$key":'');
 }
 
-// excecute SQL statement
+// execute SQL statement
 $result = mysqli_query($mysqli,$sql);
  
 // die if SQL statement failed

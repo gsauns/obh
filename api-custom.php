@@ -43,12 +43,48 @@ function getSongPlaysbySongId($song_id) {
     }
 }
 
+function getShowsBySongIds ($song_ids) {
+    $where = '';
+    
+    if (count($song_ids) > 1) {
+        // is this an array?
+        $where = " WHERE sl.song_id IN (";
+        $inclause = "";
+        foreach ($song_ids as &$id) {
+            if (is_numeric($id)) {
+                $inclause = $inclause . $id . ",";
+            }
+        }
+        $inlength = strlen($inclause);
+        if ($inlength > 0) {
+            $where = $where . substr($inclause, 0, $inlength-1);
+        }
+        $where = $where . ")";
+    }
+    elseif (count($song_ids) == 1) {
+        $id = $song_ids[0];
+        $where = " WHERE song_id = $id";
+    }
+    if (!empty($where)) {
+        $result = "SELECT DISTINCT shows.*
+                    FROM mmj_shows shows
+                    INNER JOIN mmj_setlists sl 
+                    ON shows.id = sl.show_id" . $where;
+
+        return $result;
+    }
+    else {
+        return "";
+    }
+}
+
 $mysqli = new mysqli("localhost", "meganmeg_admin", $pw, "meganmeg_wedding");
 
 // get the HTTP method and path of the request
 $method = $_SERVER['REQUEST_METHOD'];
 $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 $customtype = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+$param = reset($request);
 $key = array_shift($request)+0;
 
 // check connection 
@@ -65,9 +101,15 @@ switch ($customtype) {
     case "songplays":
         $sql = getSongPlaysbySongId($key);
         break;
+
+    case "showsbysongs":
+        $ids = explode(",", $param);
+        $sql = getShowsBySongIds($ids);
+        break;
 }
 
-// excecute SQL statement
+// printf($sql);
+// execute SQL statement
 $result = mysqli_query($mysqli,$sql);
  
 // die if SQL statement failed

@@ -11,9 +11,18 @@ $(document).ready(function() {
     if ($search.length)
         singleSearchSelect2($search, 'shows');
 
+    var $showBySetlist = $('#searchShowBySetlist');
+    if ($showBySetlist.length)
+        singleSearchSelect2($showBySetlist, 'songs');
+
     // show search select2
     $('div.search-group').on('change','#searchShows', function (e) {
-        var ids = $(e.currentTarget).val();
+        var ids     = $(e.currentTarget).val(),
+            $others = $('#searchShowBySetlist');
+
+        // if there's a value and there are other select2's, clear em.
+        if ($others && ids && ids.length > 0)
+            $others.val(null).trigger('change');
 
         if (Array.isArray(ids)) {
             if (ids.length == 0)
@@ -22,6 +31,26 @@ $(document).ready(function() {
                 // call API and get selected songs only
                 var showlist = ids.join(',');
                 loadShowInfo('../../api.php/mmj_shows/' + showlist, true);
+            }
+        }
+    });
+
+    // song search select2
+    $('div.search-group').on('change','#searchShowBySetlist', function (e) {
+        var ids     = $(e.currentTarget).val(),
+            $others = $('#searchShows');
+
+        // if there's a value and there are other select2's, clear em.
+        if ($others && ids && ids.length > 0)
+            $others.val(null).trigger('change');
+        
+        if (Array.isArray(ids)) {
+            if (ids.length == 0)
+                loadShowInfo(null, true);
+            else {
+                // call API and get selected songs only
+                var songlist = ids.join(',');
+                loadShowInfo('../../api-custom.php/showsbysongs/' + songlist, true);
             }
         }
     });
@@ -108,9 +137,10 @@ function loadShowInfo (url, clearBody) {
 
 function initGoogleMap(ctrl) {
     var input = document.getElementById(ctrl);
-    placeautocomplete = new google.maps.places.Autocomplete(input);
-
-    placeautocomplete.addListener('place_changed', fillInAddress);
+    if (input) {
+        placeautocomplete = new google.maps.places.Autocomplete(input);
+        placeautocomplete.addListener('place_changed', fillInAddress);
+    }
 }
 
 function fillInAddress() {
