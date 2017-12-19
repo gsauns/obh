@@ -1,5 +1,7 @@
 'use strict';
 
+var blockLoad = false;
+
 $(document).ready(function() {
     loadSongInfo(null, false);
     newButtonType('Song');
@@ -8,17 +10,56 @@ $(document).ready(function() {
     if ($search.length)
         singleSearchSelect2($search, 'songs');
 
+    var $songBySetlist = $('#searchSongBySetlist');
+    if ($songBySetlist.length)
+        singleSearchSelect2($songBySetlist, 'shows');
+
     // song search select2
     $('div.search-group').on('change','#searchSongs', function (e) {
-        var song_ids = $(e.currentTarget).val();
+        var ids     = $(e.currentTarget).val(),
+        $others     = $('#searchSongBySetlist');
 
-        if (Array.isArray(song_ids)) {
-            if (song_ids.length == 0)
+        // if there's a value and there are other select2's, clear em.
+        if ($others && ids && ids.length > 0) {
+            blockLoad = true;
+            $others.val(null).trigger('change');
+        }
+
+        if (blockLoad)
+            // block a full call; cleared by other control.
+            blockLoad = false;
+        else if (Array.isArray(ids)) {
+            if (ids.length == 0)
                 loadSongInfo(null, true);
             else {
                 // call API and get selected songs only
-                var songlist = song_ids.join(',');
+                var songlist = ids.join(',');
                 loadSongInfo('../../api.php/songs/' + songlist, true);
+            }
+        }
+    });
+
+    // show search select2
+    $('div.search-group').on('change','#searchSongBySetlist', function (e) {
+        var ids     = $(e.currentTarget).val(),
+            $others = $('#searchSongs');
+
+        // if there's a value and there are other select2's, clear em.
+        if ($others && ids && ids.length > 0) {
+            blockLoad = true;
+            $others.val(null).trigger('change');
+        }
+        
+        if (blockLoad)
+            // block a full call; cleared by other control.
+            blockLoad = false;
+        else if (Array.isArray(ids)) {
+            if (ids.length == 0)
+                loadSongInfo(null, true);
+            else {
+                // call API and get selected songs only
+                var showlist = ids.join(',');
+                loadSongInfo('../../api-custom.php/songsbyshows/' + showlist, true);
             }
         }
     });

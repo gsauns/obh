@@ -43,14 +43,14 @@ function getSongPlaysbySongId($song_id) {
     }
 }
 
-function getShowsBySongIds ($song_ids) {
+function getItemFromSetlist ($ids, $table, $joincol, $foreigncol) {
     $where = '';
     
-    if (count($song_ids) > 1) {
+    if (count($ids) > 1) {
         // is this an array?
-        $where = " WHERE sl.song_id IN (";
+        $where = " WHERE sl.$foreigncol IN (";
         $inclause = "";
-        foreach ($song_ids as &$id) {
+        foreach ($ids as &$id) {
             if (is_numeric($id)) {
                 $inclause = $inclause . $id . ",";
             }
@@ -61,15 +61,15 @@ function getShowsBySongIds ($song_ids) {
         }
         $where = $where . ")";
     }
-    elseif (count($song_ids) == 1) {
-        $id = $song_ids[0];
-        $where = " WHERE song_id = $id";
+    elseif (count($ids) == 1) {
+        $id = $ids[0];
+        $where = " WHERE sl.$foreigncol = $id";
     }
     if (!empty($where)) {
-        $result = "SELECT DISTINCT shows.*
-                    FROM mmj_shows shows
+        $result = "SELECT DISTINCT main.*
+                    FROM $table main
                     INNER JOIN mmj_setlists sl 
-                    ON shows.id = sl.show_id" . $where;
+                    ON main.id = sl.$joincol" . $where;
 
         return $result;
     }
@@ -81,11 +81,12 @@ function getShowsBySongIds ($song_ids) {
 $mysqli = new mysqli("localhost", "meganmeg_admin", $pw, "meganmeg_wedding");
 
 // get the HTTP method and path of the request
-$method = $_SERVER['REQUEST_METHOD'];
-$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+$method     = $_SERVER['REQUEST_METHOD'];
+$request    = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 $customtype = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-$param = reset($request);
-$key = array_shift($request)+0;
+$param      = reset($request);
+$key        = array_shift($request)+0;
+$ids        = explode(",", $param);
 
 // check connection 
 if (mysqli_connect_errno()) {
@@ -103,12 +104,15 @@ switch ($customtype) {
         break;
 
     case "showsbysongs":
-        $ids = explode(",", $param);
-        $sql = getShowsBySongIds($ids);
+        $sql = getItemFromSetlist($ids, "mmj_shows", "show_id", "song_id");
+        break;
+
+    case "songsbyshows":
+        $sql = $sql = getItemFromSetlist($ids, "songs", "song_id", "show_id");
         break;
 }
 
-// printf($sql);
+//printf($sql);
 // execute SQL statement
 $result = mysqli_query($mysqli,$sql);
  

@@ -47,10 +47,15 @@
                 <div class="panel-body">
                     <h2>Songs</h2>
                 </div>
-                <div class="input-group col-xs-12 search-group">
-                    <span class="input-group-addon">Search:</span>
-                    <select id="searchSongs" style="width:99%;" multiple="multiple"></select>
-                </div>
+                <div class="input-group col-xs-12 form-group search-group">
+                        <label for="searchSongs" class="p-l-sm">Search for songs:</label>
+                        <!-- <span class="input-group-addon">Search Song:</span> -->
+                        <select id="searchSongs" style="width:99%;" multiple="multiple"></select>
+                    </div>
+                    <div class="input-group col-xs-12 form-group search-group">
+                        <label for="searchSongBySetlist" class="p-l-sm">Search songs played at shows:</label>
+                        <select id="searchSongBySetlist" style="width:99%;" multiple="multiple"></select>
+                    </div>
                 <table id="tblSongs" class="table table-striped">
                     <thead>
                         <tr>

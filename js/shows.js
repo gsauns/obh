@@ -1,6 +1,7 @@
 'use strict';
 
-var placeautocomplete;
+var placeautocomplete,
+    blockLoad = false;
 
 $(document).ready(function() {
     loadShowInfo(null, false);
@@ -21,10 +22,15 @@ $(document).ready(function() {
             $others = $('#searchShowBySetlist');
 
         // if there's a value and there are other select2's, clear em.
-        if ($others && ids && ids.length > 0)
+        if ($others && ids && ids.length > 0) {
+            blockLoad = true;
             $others.val(null).trigger('change');
+        }
 
-        if (Array.isArray(ids)) {
+        if (blockLoad)
+            // block a full call; cleared by other control.
+            blockLoad = false;
+        else if (Array.isArray(ids)) {
             if (ids.length == 0)
                 loadShowInfo(null, true);
             else {
@@ -41,10 +47,15 @@ $(document).ready(function() {
             $others = $('#searchShows');
 
         // if there's a value and there are other select2's, clear em.
-        if ($others && ids && ids.length > 0)
+        if ($others && ids && ids.length > 0) {
+            blockLoad = true;
             $others.val(null).trigger('change');
+        }
         
-        if (Array.isArray(ids)) {
+        if (blockLoad)
+            // block a full call; cleared by other control.
+            blockLoad = false;
+        else if (Array.isArray(ids)) {
             if (ids.length == 0)
                 loadShowInfo(null, true);
             else {
