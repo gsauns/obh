@@ -81,8 +81,10 @@ $(document).ready(function() {
             start   = moment($('#startDate').val(), ['M/D/YYYY','M/D/YY']),
             end     = moment($('#endDate').val(), ['M/D/YYYY','M/D/YY']);
 
-        if (Array.isArray(songids) && songids.length > 0)
+        if (Array.isArray(songids) && songids.length > 0) {
             obj['song_ids'] = songids;
+            obj['songtype'] = $('input[name="songtype"]:checked').val();
+        }
 
         if (start.isValid())
             obj['start'] = start.format('MM/DD/YYYY');

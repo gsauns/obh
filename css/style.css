@@ -41,6 +41,10 @@
     margin-left: 10px;
 }
 
+.m-r-sm {
+    margin-right: 10px;
+}
+
 /* Setlist grid input widths --------- */
 .grid-setlist-order {
     max-width: 70px;

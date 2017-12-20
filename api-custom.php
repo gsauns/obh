@@ -82,16 +82,46 @@ function searchForShows($obj, $sqli) {
     $result = "SELECT DISTINCT sh.*";
     $from   = " FROM mmj_shows sh";
     $where  = " WHERE 1 = 1";
+    $group  = "";
+    $having = "";
 
     if (!empty($obj['song_ids'])) {
         $songs = $obj['song_ids'];
-        $from = $from . " INNER JOIN mmj_setlists sl
-                    ON sh.id = sl.show_id";
-        $where = $where . " AND sl.song_id ";
 
-        if (count($songs) > 1) {
-            // is this an array?
-            $where = " IN (";
+        if ($obj['songtype'] == 'any') {
+            $from = $from . " INNER JOIN mmj_setlists sl
+                        ON sh.id = sl.show_id";
+            $where = $where . " AND sl.song_id ";
+
+            if (count($songs) > 1) {
+                // is this an array?
+                $where = $where . " IN (";
+                $inclause = "";
+                foreach ($songs as &$id) {
+                    if (is_numeric($id)) {
+                        $inclause = $inclause . $id . ",";
+                    }
+                }
+                $inlength = strlen($inclause);
+                if ($inlength > 0) {
+                    $where = $where . substr($inclause, 0, $inlength-1);
+                }
+                $where = $where . ")";
+            }
+            elseif (count($songs) == 1) {
+                $id = $songs[0];
+                if (is_numeric($id)) {
+                    $where = " WHERE sl.song_id = $id";
+                }
+            }
+        }
+        else {
+            // must be all songs
+            $where = $where . " AND sh.id IN (
+                        SELECT slsub.show_id
+                        FROM mmj_setlists slsub
+                        WHERE slsub.song_id IN (";
+
             $inclause = "";
             foreach ($songs as &$id) {
                 if (is_numeric($id)) {
@@ -102,13 +132,9 @@ function searchForShows($obj, $sqli) {
             if ($inlength > 0) {
                 $where = $where . substr($inclause, 0, $inlength-1);
             }
-            $where = $where . ")";
-        }
-        elseif (count($songs) == 1) {
-            $id = $songs[0];
-            if (is_numeric($id)) {
-                $where = " WHERE sl.song_id = $id";
-            }
+            $where = $where . ")
+                        GROUP BY slsub.show_id
+                        HAVING COUNT(distinct slsub.song_id) >= " . count($songs) . ")";
         }
     }
 
@@ -164,6 +190,7 @@ switch ($customtype) {
 
 // printf($sql);
 // print_r($data);
+
 // execute SQL statement
 $result = mysqli_query($mysqli,$sql);
  
