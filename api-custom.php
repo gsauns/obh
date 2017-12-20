@@ -78,9 +78,55 @@ function getItemFromSetlist ($ids, $table, $joincol, $foreigncol) {
     }
 }
 
+function searchForShows($obj, $sqli) {
+    $result = "SELECT DISTINCT sh.*";
+    $from   = " FROM mmj_shows sh";
+    $where  = " WHERE 1 = 1";
+
+    if (!empty($obj['song_ids'])) {
+        $songs = $obj['song_ids'];
+        $from = $from . " INNER JOIN mmj_setlists sl
+                    ON sh.id = sl.show_id";
+        $where = $where . " AND sl.song_id ";
+
+        if (count($songs) > 1) {
+            // is this an array?
+            $where = " IN (";
+            $inclause = "";
+            foreach ($songs as &$id) {
+                if (is_numeric($id)) {
+                    $inclause = $inclause . $id . ",";
+                }
+            }
+            $inlength = strlen($inclause);
+            if ($inlength > 0) {
+                $where = $where . substr($inclause, 0, $inlength-1);
+            }
+            $where = $where . ")";
+        }
+        elseif (count($songs) == 1) {
+            $id = $songs[0];
+            if (is_numeric($id)) {
+                $where = " WHERE sl.song_id = $id";
+            }
+        }
+    }
+
+    if (!empty($obj['start'])) {
+        $where = $where . " AND date(sh.date) >= '" . $sqli->real_escape_string(date('Y-m-d', strtotime($obj['start']))) . "'";
+    }
+
+    if (!empty($obj['end'])) {
+        $where = $where . " AND date(sh.date) <= '" . $sqli->real_escape_string(date('Y-m-d', strtotime($obj['end']))) . "'";
+    }
+
+    return $result . $from . $where;
+}
+
 $mysqli = new mysqli("localhost", "meganmeg_admin", $pw, "meganmeg_wedding");
 
 // get the HTTP method and path of the request
+$data       = json_decode(file_get_contents('php://input'), true);
 $method     = $_SERVER['REQUEST_METHOD'];
 $request    = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 $customtype = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
@@ -108,19 +154,24 @@ switch ($customtype) {
         break;
 
     case "songsbyshows":
-        $sql = $sql = getItemFromSetlist($ids, "songs", "song_id", "show_id");
+        $sql = getItemFromSetlist($ids, "songs", "song_id", "show_id");
+        break;
+
+    case "searchshows":
+        $sql = searchForShows($data, $mysqli);
         break;
 }
 
-//printf($sql);
+// printf($sql);
+// print_r($data);
 // execute SQL statement
 $result = mysqli_query($mysqli,$sql);
  
 // die if SQL statement failed
-if (!$result) {
-  http_response_code(404);
-  die(mysqli_error());
-}
+// if (!$result) {
+//   http_response_code(404);
+//   die(mysqli_error());
+// }
 
 echo '[';
 for ($i=0;$i<mysqli_num_rows($result);$i++) {

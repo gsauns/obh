@@ -46,16 +46,35 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h2>Shows</h2>
-                </div>
-                <div class="input-group col-xs-12 form-group search-group">
-                    <label for="searchShows" class="p-l-sm">Search for shows:</label>
-                    <!-- <span class="input-group-addon">Search Song:</span> -->
-                    <select id="searchShows" style="width:99%;" multiple="multiple"></select>
-                </div>
-                <div class="input-group col-xs-12 form-group search-group">
-                    <label for="searchShowBySetlist" class="p-l-sm">Search show by song played:</label>
-                    <select id="searchShowBySetlist" style="width:99%;" multiple="multiple"></select>
-                    <!-- TODO: all songs / any songs radio -->
+                    <a class="btn btn-info" role="button" data-toggle="collapse" href="#searchContainer" aria-expanded="false" aria-controls="searchContainer">
+                        Toggle Search
+                    </a>
+                    <div id="searchContainer" class="row p-t-sm collapse">
+                        <div class="col-xs-12 form-group search-group">
+                            <label for="searchShows">Search for shows:</label>
+                            <!-- <span class="input-group-addon">Search Song:</span> -->
+                            <select id="searchShows" style="width:99%;" multiple="multiple"></select>
+                        </div>
+                        <div class="col-xs-12 form-group search-group">
+                            <label for="searchShowBySetlist">Search show by song played:</label>
+                            <select id="searchShowBySetlist" style="width:99%;" multiple="multiple"></select>
+                            <!-- TODO: all songs / any songs radio -->
+                        </div>
+                        <div class="col-xs-12">
+                            <h6>Show Dates</h6>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 form-group search-group">
+                            <label for="startDate">Start Date:</label>
+                            <input type="text" id="startDate" class="form-control datepicker" />
+                        </div>
+                        <div class="col-xs-12 col-sm-6 form-group search-group">
+                            <label for="endDate">End Date:</label>
+                            <input type="text" id="endDate" class="form-control datepicker" />
+                        </div>
+                        <div class="col-xs-12">
+                            <button id="submitSearchShow" role="button" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
                 </div>
                 <table id="tblShows" class="table table-striped">
                     <thead>

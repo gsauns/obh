@@ -1,13 +1,6 @@
 'use strict';
 
 $(document).ready(function() {
-	$('input.datepicker').datepicker({
-        changeMonth: true,
-        changeYear: true,
-        showButtonPanel: true,
-		dateFormat: 'mm/dd/yy'
-	});
-	
 	$('button.btn-new').on('click', function () {
 		var $form 	= $('form.entry-form'),
 			$modal 	= $('#myModal'),

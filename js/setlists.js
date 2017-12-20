@@ -195,7 +195,7 @@ function submitSetlistRecord($row, newrecord) {
                     $.growl.error({ title: 'Error', message: data});
             },
             error: function (data, status, errorThrown) {
-                console.log('Error', data, status, errorThrown);
+                $.growl.error({ title: 'Error', message: errorThrown});
             }
         });
     }

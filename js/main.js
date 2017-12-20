@@ -1,5 +1,18 @@
 'use strict';
 
+$(document).ready(function() {
+    $('input.datepicker').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        dateFormat: 'mm/dd/yy',
+        onSelect: function (d,i) {
+            if (d !== i.lastVal)
+                $(this).trigger('input');
+        } 
+	});
+});
+
 function emptyRow(colspan) {
     // row returned when no records are found.
     return '<tr class="danger"><td' + 

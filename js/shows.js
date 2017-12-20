@@ -25,6 +25,7 @@ $(document).ready(function() {
         if ($others && ids && ids.length > 0) {
             blockLoad = true;
             $others.val(null).trigger('change');
+            $('input.datepicker').val('');
         }
 
         if (blockLoad)
@@ -52,17 +53,61 @@ $(document).ready(function() {
             $others.val(null).trigger('change');
         }
         
-        if (blockLoad)
-            // block a full call; cleared by other control.
-            blockLoad = false;
-        else if (Array.isArray(ids)) {
-            if (ids.length == 0)
-                loadShowInfo(null, true);
-            else {
-                // call API and get selected songs only
-                var songlist = ids.join(',');
-                loadShowInfo('../../api-custom.php/showsbysongs/' + songlist, true);
-            }
+        blockLoad = false;
+        // if (blockLoad)
+        //     // block a full call; cleared by other control.
+        //     blockLoad = false;
+        // else if (Array.isArray(ids)) {
+        //     if (ids.length == 0)
+        //         loadShowInfo(null, true);
+        //     else {
+        //         // call API and get selected songs only
+        //         var songlist = ids.join(',');
+        //         loadShowInfo('../../api-custom.php/showsbysongs/' + songlist, true);
+        //     }
+        // }
+    });
+
+    $('div.search-group').on('input','#startDate,#endDate', function (e) {
+        var $shows = $('#searchShows');
+        if ($shows.val().length)
+            $shows.val(null).trigger('change');
+    });
+
+    $('#submitSearchShow').on('click', function () {
+        var obj = {};
+
+        var songids = $('#searchShowBySetlist').val(),
+            start   = moment($('#startDate').val(), ['M/D/YYYY','M/D/YY']),
+            end     = moment($('#endDate').val(), ['M/D/YYYY','M/D/YY']);
+
+        if (Array.isArray(songids) && songids.length > 0)
+            obj['song_ids'] = songids;
+
+        if (start.isValid())
+            obj['start'] = start.format('MM/DD/YYYY');
+
+        if (end.isValid())
+            obj['end'] = end.format('MM/DD/YYYY');
+        
+        if (!$.isEmptyObject(obj)) {
+            $('div.container').append('<div class="spinner"></div>');
+            $.ajax({
+                url: '../../api-custom.php/searchshows',
+                data: JSON.stringify(obj),
+                type: 'post',
+                contentType: "application/json",
+                success: function (data, status) {
+                    songSuccess(data, status, true);
+                },
+                error: function (data, status, errorThrown) {
+                    console.log('Error', data, status, errorThrown);
+                    swal('Error', 'There was an error: ' + errorThrown, 'error');
+                },
+                complete: function () {
+                    $('div.spinner').remove();
+                }
+            });
         }
     });
 });
@@ -76,64 +121,7 @@ function loadShowInfo (url, clearBody) {
         url: url,
         type: 'post',
         success: function (data, status) {
-            var errstring   = '',
-                $tbody      = $('#tblShows > tbody');
-
-            if (status == 'success') {
-                var result;
-                try {
-                    result = JSON.parse(data);
-
-                    if (clearBody)
-                        $tbody.empty();
-
-                    if (Array.isArray(result) && result.length > 0) {
-                        var row, dt, location;
-
-                        for (var i = 0; i < result.length; i++) {
-                            dt = new Date(result[i].date);
-                            if (result[i].google_place_id && result[i].google_place_coords && result[i].location) {
-                                location = '<a href="https://www.google.com/maps/search/?api=1&query=' +
-                                            result[i].google_place_coords +
-                                            '&query_place_id=' +
-                                            result[i].google_place_id + 
-                                            '" target="_blank">' +
-                                            result[i].location + 
-                                            '</a>';
-                            }
-                            else
-                                location = result[i].location; 
-
-                            row = '<tr>' + 
-                                editDeleteColumn(result[i].id, 'mmj_shows', true, result[i].headline) +
-                                td(moment(result[i].date).format('MM/DD/YYYY')) +
-                                td(result[i].headline) +
-                                // td(result[i].location) +
-                                // (result[i] && result[i].address.length > 0 ? 
-                                //     td('<a href="https://maps.google.com/maps?q=' + 
-                                //     result[i].address + 
-                                //     '" target="_blank">' + 
-                                //     result[i].address + 
-                                //     '</a>') : td(result[i].address)) +
-                                td(location) +
-                                td(result[i].notes) +
-                                '</tr>';
-
-                            $tbody.append(row);
-                        }
-                    }
-                    else
-                        $tbody.append(emptyRow(5));
-                }
-                catch (ex) {
-                    errstring = ex.message;
-                }
-            }
-            else 
-                errstring = status;
-
-            if (errstring.length > 0)
-                swal('Error', 'There was an error: ' + errstring, 'error');
+            songSuccess(data, status, clearBody);
         },
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
@@ -216,4 +204,65 @@ function fillInAddress() {
     $form.find('#state').val(state);
     $form.find('#zip').val(zip);
     $form.find('#country').val(country);
+}
+
+function songSuccess (data, status, clearBody) {
+    var errstring   = '',
+        $tbody      = $('#tblShows > tbody');
+
+    if (status == 'success') {
+        var result;
+        try {
+            result = JSON.parse(data);
+
+            if (clearBody)
+                $tbody.empty();
+
+            if (Array.isArray(result) && result.length > 0) {
+                var row, dt, location;
+
+                for (var i = 0; i < result.length; i++) {
+                    dt = new Date(result[i].date);
+                    if (result[i].google_place_id && result[i].google_place_coords && result[i].location) {
+                        location = '<a href="https://www.google.com/maps/search/?api=1&query=' +
+                                    result[i].google_place_coords +
+                                    '&query_place_id=' +
+                                    result[i].google_place_id + 
+                                    '" target="_blank">' +
+                                    result[i].location + 
+                                    '</a>';
+                    }
+                    else
+                        location = result[i].location; 
+
+                    row = '<tr>' + 
+                        editDeleteColumn(result[i].id, 'mmj_shows', true, result[i].headline) +
+                        td(moment(result[i].date).format('MM/DD/YYYY')) +
+                        td(result[i].headline) +
+                        // td(result[i].location) +
+                        // (result[i] && result[i].address.length > 0 ? 
+                        //     td('<a href="https://maps.google.com/maps?q=' + 
+                        //     result[i].address + 
+                        //     '" target="_blank">' + 
+                        //     result[i].address + 
+                        //     '</a>') : td(result[i].address)) +
+                        td(location) +
+                        td(result[i].notes) +
+                        '</tr>';
+
+                    $tbody.append(row);
+                }
+            }
+            else
+                $tbody.append(emptyRow(5));
+        }
+        catch (ex) {
+            errstring = ex.message;
+        }
+    }
+    else 
+        errstring = status;
+
+    if (errstring.length > 0)
+        swal('Error', 'There was an error: ' + errstring, 'error');
 }

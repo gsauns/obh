@@ -48,10 +48,10 @@ elseif (is_numeric($key)) {
 $result = mysqli_query($mysqli,$sql);
  
 // die if SQL statement failed
-if (!$result) {
-  http_response_code(404);
-  die(mysqli_error());
-}
+// if (!$result) {
+//   http_response_code(404);
+//   die(mysqli_error());
+// }
 
 echo '[';
 for ($i=0;$i<mysqli_num_rows($result);$i++) {
