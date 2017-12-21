@@ -1,6 +1,7 @@
 'use strict';
 
 var placeautocomplete;
+search_callback = loadShowInfo;
 
 $(document).ready(function() {
     loadShowInfo(null, false);

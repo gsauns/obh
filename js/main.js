@@ -1,5 +1,7 @@
 'use strict';
 
+var search_callback;
+
 $(document).ready(function() {
     $('input.datepicker').datepicker({
         changeMonth: true,

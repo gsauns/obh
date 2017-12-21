@@ -1,6 +1,7 @@
 'use strict';
 
 var blockLoad = false;
+search_callback = loadSongInfo;
 
 $(document).ready(function() {
     loadSongInfo(null, false);
@@ -14,42 +15,11 @@ $(document).ready(function() {
     if ($songBySetlist.length)
         singleSearchSelect2($songBySetlist, 'shows');
 
-    // song search select2
-    $('div.search-group').on('change','#searchSongs', function (e) {
-        var ids     = $(e.currentTarget).val(),
-        $others     = $('#searchSongBySetlist');
-
-        // if there's a value and there are other select2's, clear em.
-        if ($others && ids && ids.length > 0) {
-            blockLoad = true;
-            $others.val(null).trigger('change');
-        }
-
-        if (blockLoad)
-            // block a full call; cleared by other control.
-            blockLoad = false;
-        else if (Array.isArray(ids)) {
-            if (ids.length == 0)
-                loadSongInfo(null, true);
-            else {
-                // call API and get selected songs only
-                var songlist = ids.join(',');
-                loadSongInfo('../../api.php/songs/' + songlist, true);
-            }
-        }
-    });
-
     // show search select2
     $('div.search-group').on('change','#searchSongBySetlist', function (e) {
         var ids     = $(e.currentTarget).val(),
-            $others = $('#searchSongs');
+            $others = $('select.s2-primary').not(this);
 
-        // if there's a value and there are other select2's, clear em.
-        if ($others && ids && ids.length > 0) {
-            blockLoad = true;
-            $others.val(null).trigger('change');
-        }
-        
         if (blockLoad)
             // block a full call; cleared by other control.
             blockLoad = false;
@@ -61,6 +31,12 @@ $(document).ready(function() {
                 var showlist = ids.join(',');
                 loadSongInfo('../../api-custom.php/songsbyshows/' + showlist, true);
             }
+        }
+
+        // if there's a value and there are other select2's, clear em.
+        if ($others && ids && ids.length > 0) {
+            blockLoad = true;
+            $others.val(null).trigger('change');
         }
     });
 });

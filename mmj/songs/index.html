@@ -52,12 +52,11 @@
                     <div id="searchContainer" class="row p-t-sm collapse">
                         <div class="col-xs-12 form-group search-group">
                             <label for="searchSongs">Search for songs:</label>
-                            <!-- <span class="input-group-addon">Search Song:</span> -->
-                            <select id="searchSongs" style="width:99%;" multiple="multiple"></select>
+                            <select id="searchSongs" style="width:99%;" multiple="multiple" class="s2-primary s2-control" searchpath="songs"></select>
                         </div>
                         <div class="col-xs-12 form-group search-group">
                             <label for="searchSongBySetlist">Search song by shows where they were played:</label>
-                            <select id="searchSongBySetlist" style="width:99%;" multiple="multiple"></select>
+                            <select id="searchSongBySetlist" style="width:99%;" multiple="multiple" class="s2-control" searchpath="songsbyshows" custompath="custom"></select>
                             <div class="p-t-sm">
                                 <input type="radio" id="showAny" name="showtype" value="any" checked>
                                 <label for="showAny" class="m-r-sm">Any of these shows</label>
@@ -67,16 +66,16 @@
                                 <label for="showAll">All of these shows</label>
                             </div>
                         </div>
-                        <div class="col-xs-12">
+                        <div class="col-xs-12 search-separator">
                             <h6>Dates Played</h6>
                         </div>
                         <div class="col-xs-12 col-sm-6 form-group search-group">
                             <label for="startDate">Start Date:</label>
-                            <input type="text" id="startDate" class="form-control datepicker" />
+                            <input type="text" id="startDate" class="form-control datepicker s2-secondary" />
                         </div>
                         <div class="col-xs-12 col-sm-6 form-group search-group">
                             <label for="endDate">End Date:</label>
-                            <input type="text" id="endDate" class="form-control datepicker" />
+                            <input type="text" id="endDate" class="form-control datepicker s2-secondary" />
                         </div>
                         <div class="col-xs-12">
                             <button id="submitSearchSong" role="button" class="btn btn-primary">Search</button>
@@ -139,5 +138,6 @@
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <script type="text/javascript" src="../../js/main.js"></script>
         <script type="text/javascript" src="../../js/songs.js"></script>
+        <script type="text/javascript" src="../../js/search.js"></script>
     </body>
 </html>

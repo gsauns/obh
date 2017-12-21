@@ -52,12 +52,11 @@
                     <div id="searchContainer" class="row p-t-sm collapse">
                         <div class="col-xs-12 form-group search-group">
                             <label for="searchShows">Search for shows:</label>
-                            <!-- <span class="input-group-addon">Search Song:</span> -->
-                            <select id="searchShows" style="width:99%;" multiple="multiple" class="s2-primary"></select>
+                            <select id="searchShows" style="width:99%;" multiple="multiple" class="s2-primary s2-control" searchpath="mmj_shows"></select>
                         </div>
-                        <div class="col-xs-12 form-group search-group">
+                        <div class="col-xs-12 form-group search-group search-separator p-t-sm">
                             <label for="searchShowBySetlist">Search show by song played:</label>
-                            <select id="searchShowBySetlist" style="width:99%;" multiple="multiple" class="s2-secondary"></select>
+                            <select id="searchShowBySetlist" style="width:99%;" multiple="multiple" class="s2-secondary s2-control"></select>
                             <div class="p-t-sm">
                                 <input type="radio" id="songAny" name="songtype" value="any" checked>
                                 <label for="songAny" class="m-r-sm">Any of these songs</label>
@@ -136,7 +135,7 @@
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUp0YUQP68pa8TFG4dcqsPxn3YXRxAgZE&libraries=places"
         async defer></script>
         <script type="text/javascript" src="../../js/main.js"></script>
-        <script type="text/javascript" src="../../js/search.js"></script>
         <script type="text/javascript" src="../../js/shows.js"></script>
+        <script type="text/javascript" src="../../js/search.js"></script>
     </body>
 </html>

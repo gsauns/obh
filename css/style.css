@@ -20,6 +20,10 @@
     width: auto;
 }
 
+.search-separator {
+    border-top: 3px solid #777;
+}
+
 /* Utility ------------*/
 .full-width {
     width: 100%;
