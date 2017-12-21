@@ -1,7 +1,6 @@
 'use strict';
 
-var placeautocomplete,
-    blockLoad = false;
+var placeautocomplete;
 
 $(document).ready(function() {
     loadShowInfo(null, false);
@@ -15,64 +14,6 @@ $(document).ready(function() {
     var $showBySetlist = $('#searchShowBySetlist');
     if ($showBySetlist.length)
         singleSearchSelect2($showBySetlist, 'songs');
-
-    // show search select2
-    $('div.search-group').on('change','#searchShows', function (e) {
-        var ids     = $(e.currentTarget).val(),
-            $others = $('#searchShowBySetlist');
-
-        // if there's a value and there are other select2's, clear em.
-        if ($others && ids && ids.length > 0) {
-            blockLoad = true;
-            $others.val(null).trigger('change');
-            $('input.datepicker').val('');
-        }
-
-        if (blockLoad)
-            // block a full call; cleared by other control.
-            blockLoad = false;
-        else if (Array.isArray(ids)) {
-            if (ids.length == 0)
-                loadShowInfo(null, true);
-            else {
-                // call API and get selected songs only
-                var showlist = ids.join(',');
-                loadShowInfo('../../api.php/mmj_shows/' + showlist, true);
-            }
-        }
-    });
-
-    // song search select2
-    $('div.search-group').on('change','#searchShowBySetlist', function (e) {
-        var ids     = $(e.currentTarget).val(),
-            $others = $('#searchShows');
-
-        // if there's a value and there are other select2's, clear em.
-        if ($others && ids && ids.length > 0) {
-            blockLoad = true;
-            $others.val(null).trigger('change');
-        }
-        
-        blockLoad = false;
-        // if (blockLoad)
-        //     // block a full call; cleared by other control.
-        //     blockLoad = false;
-        // else if (Array.isArray(ids)) {
-        //     if (ids.length == 0)
-        //         loadShowInfo(null, true);
-        //     else {
-        //         // call API and get selected songs only
-        //         var songlist = ids.join(',');
-        //         loadShowInfo('../../api-custom.php/showsbysongs/' + songlist, true);
-        //     }
-        // }
-    });
-
-    $('div.search-group').on('input','#startDate,#endDate', function (e) {
-        var $shows = $('#searchShows');
-        if ($shows.val().length)
-            $shows.val(null).trigger('change');
-    });
 
     $('#submitSearchShow').on('click', function () {
         var obj = {};
