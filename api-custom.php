@@ -149,6 +149,10 @@ function searchForShows($obj, $sqli) {
     return $result . $from . $where;
 }
 
+function searchForSongs($obj, $sqli) {
+    return "";
+}
+
 $mysqli = new mysqli("localhost", "meganmeg_admin", $pw, "meganmeg_wedding");
 
 // get the HTTP method and path of the request
@@ -185,6 +189,10 @@ switch ($customtype) {
 
     case "searchshows":
         $sql = searchForShows($data, $mysqli);
+        break;
+
+    case "searchsongs":
+        $sql = searchForSongs($data, $mysqli);
         break;
 }
 

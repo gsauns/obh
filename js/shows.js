@@ -42,7 +42,7 @@ $(document).ready(function() {
                 type: 'post',
                 contentType: "application/json",
                 success: function (data, status) {
-                    songSuccess(data, status, true);
+                    showSuccess(data, status, true);
                 },
                 error: function (data, status, errorThrown) {
                     console.log('Error', data, status, errorThrown);
@@ -65,7 +65,7 @@ function loadShowInfo (url, clearBody) {
         url: url,
         type: 'post',
         success: function (data, status) {
-            songSuccess(data, status, clearBody);
+            showSuccess(data, status, clearBody);
         },
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
@@ -150,7 +150,7 @@ function fillInAddress() {
     $form.find('#country').val(country);
 }
 
-function songSuccess (data, status, clearBody) {
+function showSuccess (data, status, clearBody) {
     var errstring   = '',
         $tbody      = $('#tblShows > tbody');
 

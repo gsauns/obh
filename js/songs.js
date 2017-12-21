@@ -15,28 +15,42 @@ $(document).ready(function() {
     if ($songBySetlist.length)
         singleSearchSelect2($songBySetlist, 'shows');
 
-    // show search select2
-    $('div.search-group').on('change','#searchSongBySetlist', function (e) {
-        var ids     = $(e.currentTarget).val(),
-            $others = $('select.s2-primary').not(this);
+    $('#submitSearchSong').on('click', function () {
+        var obj = {};
 
-        if (blockLoad)
-            // block a full call; cleared by other control.
-            blockLoad = false;
-        else if (Array.isArray(ids)) {
-            if (ids.length == 0)
-                loadSongInfo(null, true);
-            else {
-                // call API and get selected songs only
-                var showlist = ids.join(',');
-                loadSongInfo('../../api-custom.php/songsbyshows/' + showlist, true);
-            }
+        var sids = $('#searchSongBySetlist').val(),
+            start   = moment($('#startDate').val(), ['M/D/YYYY','M/D/YY']),
+            end     = moment($('#endDate').val(), ['M/D/YYYY','M/D/YY']);
+
+        if (Array.isArray(sids) && sids.length > 0) {
+            obj['show_ids'] = sids;
+            obj['showtype'] = $('input[name="showtype"]:checked').val();
         }
 
-        // if there's a value and there are other select2's, clear em.
-        if ($others && ids && ids.length > 0) {
-            blockLoad = true;
-            $others.val(null).trigger('change');
+        if (start.isValid())
+            obj['start'] = start.format('MM/DD/YYYY');
+
+        if (end.isValid())
+            obj['end'] = end.format('MM/DD/YYYY');
+        
+        if (!$.isEmptyObject(obj)) {
+            $('div.container').append('<div class="spinner"></div>');
+            $.ajax({
+                url: '../../api-custom.php/searchsongs',
+                data: JSON.stringify(obj),
+                type: 'post',
+                contentType: "application/json",
+                success: function (data, status) {
+                    songSuccess(data, status, true);
+                },
+                error: function (data, status, errorThrown) {
+                    console.log('Error', data, status, errorThrown);
+                    swal('Error', 'There was an error: ' + errorThrown, 'error');
+                },
+                complete: function () {
+                    $('div.spinner').remove();
+                }
+            });
         }
     });
 });
@@ -50,45 +64,7 @@ function loadSongInfo(url, clearBody) {
         url: url,
         type: 'post',
         success: function (data, status) {
-            if (status == 'success') {
-                var errstring   = '',
-                    $tbody      = $('#tblSongs > tbody'),
-                    result;
-
-                try {
-                    result = JSON.parse(data);
-
-                    if (clearBody)
-                        $tbody.empty();
-                    
-                    if (Array.isArray(result) && result.length > 0) {
-                        var row, dt;
-
-                        for (var i = 0; i < result.length; i++) {
-                            row = '<tr item-id="' + result[i].id + '">' + 
-                                editDeleteColumn(result[i].id, 'songs', true, result[i].name + (result[i].original_artist != null && result[i].original_artist.length > 0 ? ' (' + result[i].original_artist + ')' : ''))  +
-                                td(result[i].name) +
-                                td(result[i].original_artist) +
-                                td(result[i].original_album) +
-                                td(result[i].year_released) +
-                                td(result[i].times_played) +
-                                '</tr>';
-
-                            $tbody.append(row);
-                        }
-                    }
-                    else
-                        $tbody.append(emptyRow(6));
-                }
-                catch (ex) {
-                    errstring = ex.message;
-                }
-            }
-            else 
-                errstring = status;
-
-            if (errstring.length > 0)
-                swal('Error', 'There was an error: ' + errstring, 'error');
+            songSuccess(data, status, clearBody);
         },
         error: function (data, status, errorThrown) {
             console.log('Error', data, status, errorThrown);
@@ -98,4 +74,46 @@ function loadSongInfo(url, clearBody) {
             $('div.spinner').remove();
         }
     });
+}
+
+function songSuccess (data, status, clearBody) {
+    if (status == 'success') {
+        var errstring   = '',
+            $tbody      = $('#tblSongs > tbody'),
+            result;
+
+        try {
+            result = JSON.parse(data);
+
+            if (clearBody)
+                $tbody.empty();
+            
+            if (Array.isArray(result) && result.length > 0) {
+                var row, dt;
+
+                for (var i = 0; i < result.length; i++) {
+                    row = '<tr item-id="' + result[i].id + '">' + 
+                        editDeleteColumn(result[i].id, 'songs', true, result[i].name + (result[i].original_artist != null && result[i].original_artist.length > 0 ? ' (' + result[i].original_artist + ')' : ''))  +
+                        td(result[i].name) +
+                        td(result[i].original_artist) +
+                        td(result[i].original_album) +
+                        td(result[i].year_released) +
+                        td(result[i].times_played) +
+                        '</tr>';
+
+                    $tbody.append(row);
+                }
+            }
+            else
+                $tbody.append(emptyRow(6));
+        }
+        catch (ex) {
+            errstring = ex.message;
+        }
+    }
+    else 
+        errstring = status;
+
+    if (errstring.length > 0)
+        swal('Error', 'There was an error: ' + errstring, 'error');
 }
