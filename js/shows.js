@@ -24,8 +24,8 @@ $(document).ready(function() {
             end     = moment($('#endDate').val(), ['M/D/YYYY','M/D/YY']);
 
         if (Array.isArray(songids) && songids.length > 0) {
-            obj['song_ids'] = songids;
-            obj['songtype'] = $('input[name="songtype"]:checked').val();
+            obj['fk_ids'] = songids;
+            obj['type'] = $('input[name="songtype"]:checked').val();
         }
 
         if (start.isValid())

@@ -23,8 +23,8 @@ $(document).ready(function() {
             end     = moment($('#endDate').val(), ['M/D/YYYY','M/D/YY']);
 
         if (Array.isArray(sids) && sids.length > 0) {
-            obj['show_ids'] = sids;
-            obj['showtype'] = $('input[name="showtype"]:checked').val();
+            obj['fk_ids'] = sids;
+            obj['type'] = $('input[name="showtype"]:checked').val();
         }
 
         if (start.isValid())

@@ -78,26 +78,25 @@ function getItemFromSetlist ($ids, $table, $joincol, $foreigncol) {
     }
 }
 
-function searchForShows($obj, $sqli) {
-    $result = "SELECT DISTINCT sh.*";
-    $from   = " FROM mmj_shows sh";
+function searchForEntity($obj, $table, $joincol, $foreigncol, $sqli) {
+    $result = "SELECT DISTINCT main.*";
+    $from   = " FROM $table main";
+    $join   = "";
     $where  = " WHERE 1 = 1";
-    $group  = "";
-    $having = "";
 
-    if (!empty($obj['song_ids'])) {
-        $songs = $obj['song_ids'];
+    if (!empty($obj['fk_ids'])) {
+        $arr = $obj['fk_ids'];
 
-        if ($obj['songtype'] == 'any') {
-            $from = $from . " INNER JOIN mmj_setlists sl
-                        ON sh.id = sl.show_id";
-            $where = $where . " AND sl.song_id ";
+        if ($obj['type'] == 'any') {
+            $join = " INNER JOIN mmj_setlists sl
+                        ON main.id = sl.{$joincol}";
+            $where = $where . " AND sl.{$foreigncol} ";
 
-            if (count($songs) > 1) {
+            if (count($arr) > 1) {
                 // is this an array?
                 $where = $where . " IN (";
                 $inclause = "";
-                foreach ($songs as &$id) {
+                foreach ($arr as &$id) {
                     if (is_numeric($id)) {
                         $inclause = $inclause . $id . ",";
                     }
@@ -108,22 +107,22 @@ function searchForShows($obj, $sqli) {
                 }
                 $where = $where . ")";
             }
-            elseif (count($songs) == 1) {
-                $id = $songs[0];
+            elseif (count($arr) == 1) {
+                $id = $arr[0];
                 if (is_numeric($id)) {
-                    $where = " WHERE sl.song_id = $id";
+                    $where = " WHERE sl.{$foreigncol} = $id";
                 }
             }
         }
         else {
-            // must be all songs
-            $where = $where . " AND sh.id IN (
-                        SELECT slsub.show_id
+            // must be all
+            $where = $where . " AND main.id IN (
+                        SELECT slsub.{$joincol}
                         FROM mmj_setlists slsub
-                        WHERE slsub.song_id IN (";
+                        WHERE slsub.{$foreigncol} IN (";
 
             $inclause = "";
-            foreach ($songs as &$id) {
+            foreach ($arr as &$id) {
                 if (is_numeric($id)) {
                     $inclause = $inclause . $id . ",";
                 }
@@ -133,24 +132,34 @@ function searchForShows($obj, $sqli) {
                 $where = $where . substr($inclause, 0, $inlength-1);
             }
             $where = $where . ")
-                        GROUP BY slsub.show_id
-                        HAVING COUNT(distinct slsub.song_id) >= " . count($songs) . ")";
+                        GROUP BY slsub.${joincol}
+                        HAVING COUNT(distinct slsub.{$foreigncol}) >= " . count($arr) . ")";
         }
     }
 
-    if (!empty($obj['start'])) {
-        $where = $where . " AND date(sh.date) >= '" . $sqli->real_escape_string(date('Y-m-d', strtotime($obj['start']))) . "'";
+    if (!empty($obj['start']) || !empty($obj['end'])) {
+        // if songs, gonna need to join shows to search dates
+        if ($table == "songs") {
+            // we'd just be redoing the join here, so no harm
+            $join       = " INNER JOIN mmj_setlists sl ON main.id = sl.{$joincol}
+                            INNER JOIN mmj_shows sh ON sl.show_id = sh.id";
+            $tblabbrev  = "sh";
+        }
+        else {
+            // else we are just using main (shows)
+            $tblabbrev = "main";
+        }
+        
+        if (!empty($obj['start'])) {
+            $where = $where . " AND date({$tblabbrev}.date) >= '" . $sqli->real_escape_string(date('Y-m-d', strtotime($obj['start']))) . "'";
+        }
+    
+        if (!empty($obj['end'])) {
+            $where = $where . " AND date({$tblabbrev}.date) <= '" . $sqli->real_escape_string(date('Y-m-d', strtotime($obj['end']))) . "'";
+        }
     }
 
-    if (!empty($obj['end'])) {
-        $where = $where . " AND date(sh.date) <= '" . $sqli->real_escape_string(date('Y-m-d', strtotime($obj['end']))) . "'";
-    }
-
-    return $result . $from . $where;
-}
-
-function searchForSongs($obj, $sqli) {
-    return "";
+    return $result . $from . $join . $where;
 }
 
 $mysqli = new mysqli("localhost", "meganmeg_admin", $pw, "meganmeg_wedding");
@@ -188,15 +197,16 @@ switch ($customtype) {
         break;
 
     case "searchshows":
-        $sql = searchForShows($data, $mysqli);
+        //$sql = searchForShows($data, $mysqli);
+        $sql = searchForEntity($data, "mmj_shows", "show_id", "song_id", $mysqli);
         break;
 
     case "searchsongs":
-        $sql = searchForSongs($data, $mysqli);
+        $sql = searchForEntity($data, "songs", "song_id", "show_id", $mysqli);
         break;
 }
 
-// printf($sql);
+//printf($sql);
 // print_r($data);
 
 // execute SQL statement
