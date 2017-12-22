@@ -210,7 +210,8 @@ switch ($customtype) {
 // print_r($data);
 
 // execute SQL statement
-$result = mysqli_query($mysqli,$sql);
+$limit = "100";
+$result = mysqli_query($mysqli,$sql . " limit $limit");
  
 // die if SQL statement failed
 // if (!$result) {

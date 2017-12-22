@@ -106,6 +106,8 @@ function songSuccess (data, status, clearBody) {
             }
             else
                 $tbody.append(emptyRow(6));
+
+            $('#tblSongs').trigger('update');
         }
         catch (ex) {
             errstring = ex.message;

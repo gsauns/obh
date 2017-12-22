@@ -49,7 +49,8 @@ switch ($customtype) {
         break;
 }
 
-$result = mysqli_query($mysqli,$sql);
+$limit = "100";
+$result = mysqli_query($mysqli,$sql . " limit $limit");
 
 echo '{"results":[';
 for ($i=0;$i<mysqli_num_rows($result);$i++) {

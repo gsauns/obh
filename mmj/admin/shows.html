@@ -54,12 +54,12 @@
                 </div>
                 <div class="input-group col-xs-12 search-group">
                     <span class="input-group-addon">Search:</span>
-                    <select id="searchShows" style="width:99%;" multiple="multiple"></select>
+                    <select id="searchShows" style="width:99%;" multiple="multiple" class="s2-primary s2-control" searchpath="mmj_shows"></select>
                 </div>
-                <table id="tblShows" class="table table-striped">
+                <table id="tblShows" class="table table-striped table-sortable">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th data-sorter="false"></th>
                             <th>Date</th>
                             <th>Show</th>
                             <th>Location</th>
@@ -162,10 +162,12 @@
         <script type="text/javascript" src="../../js/vendor/jquery/jquery-ui.min.js"></script>
         <script type="text/javascript" src="../../js/vendor/moment/moment.min.js"></script>
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.2/js/jquery.tablesorter.min.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUp0YUQP68pa8TFG4dcqsPxn3YXRxAgZE&libraries=places"
         async defer></script>
         <script type="text/javascript" src="../../js/main.js"></script>
         <script type="text/javascript" src="../../js/form.js"></script>
         <script type="text/javascript" src="../../js/shows.js"></script>
+        <script type="text/javascript" src="../../js/search.js"></script>
     </body>
 </html>

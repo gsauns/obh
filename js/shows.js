@@ -74,13 +74,12 @@ function loadShowInfo (url, clearBody) {
         complete: function () {
             $('div.spinner').remove();
         }
-
     });
 }
 
 function initGoogleMap(ctrl) {
     var input = document.getElementById(ctrl);
-    if (input) {
+    if (input && google) {
         placeautocomplete = new google.maps.places.Autocomplete(input);
         placeautocomplete.addListener('place_changed', fillInAddress);
     }
@@ -199,6 +198,8 @@ function showSuccess (data, status, clearBody) {
             }
             else
                 $tbody.append(emptyRow(5));
+
+            $('#tblShows').trigger('update');
         }
         catch (ex) {
             errstring = ex.message;

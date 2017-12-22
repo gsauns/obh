@@ -12,7 +12,9 @@ $(document).ready(function() {
             if (d !== i.lastVal)
                 $(this).trigger('input');
         } 
-	});
+    });
+    
+    $('table.table-sortable').tablesorter();
 });
 
 function emptyRow(colspan) {
@@ -230,9 +232,17 @@ function editSpecificWork(sender, id, type, data) {
 
         // SETLISTS: all work done here. Edit in-line.
         case 'mmj_setlists':
+            var $btn = $(sender);
+            $btn.prop('disabled', true);
             var record = JSON.parse(data);
             if (record.length == 1)
-                editSetlistInline(sender, id, record[0]);
+                try {
+                    $('button.edit-btn').prop('disabled', true);
+                    editSetlistInline(sender, id, record[0]);
+                }
+                catch (ex) {
+                    $btn.prop('disabled', false);
+                }
 
             break;
     }
@@ -375,6 +385,8 @@ function loadSetlistinfo (show_id, clearBody, clearNewRow, resolve, reject) {
             }
             else 
                 errstring = status;
+
+            $('#tblSetlist.table-sortable').trigger('update');
 
             if (errstring.length > 0) {
                 if (reject)

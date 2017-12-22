@@ -28,7 +28,7 @@ $(document).ready(function() {
         }
 
         // if there's a value and there are other select2's, clear em.
-        if ($others && ids && ids.length > 0) {
+        if ($others && $others.length && ids && ids.length) {
             blockLoad = true;
             $others.val(null).trigger('change');
             // secondary inputs get cleared too

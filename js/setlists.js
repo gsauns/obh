@@ -88,7 +88,6 @@ function editSetlistInline(sender, id, data) {
         songname    = $datatds.length > 1 ? $datatds[1].innerText : null;
     
     $tds.empty();
-    $('#tblSetlist button.edit-btn').prop('disabled', true);
 
     $($tds[0]).html(
         saveDeleteCancelButtons(data['id'], 'mmj_setlists') + 
